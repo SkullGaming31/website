@@ -11,7 +11,7 @@ import axios from 'axios';
 export default defineComponent({
   setup() {
     const clientId = 'bmorajsa11mnb04kl7cl0q0odxu7qb';
-    const redirectUri = 'http://localhost:3001/api/v1/auth/twitch/callback';
+    const redirectUri = 'http://localhost:3000/api/v1/auth/twitch/callback';
     const instance = getCurrentInstance();
 
     // Define interfaces for API responses and data

@@ -1,0 +1,6 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# Run tests on push and abort if they fail
+echo "Running tests before push..."
+npm test

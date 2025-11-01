@@ -14,6 +14,20 @@ type TwitchClip = {
   [key: string]: unknown;
 };
 
+// Video type (subset of Helix /videos)
+type TwitchVideo = {
+  id: string;
+  user_id?: string;
+  user_login?: string;
+  user_name?: string;
+  title?: string;
+  url?: string;
+  thumbnail_url?: string;
+  view_count?: number;
+  type?: string; // 'upload' | 'archive' | 'highlight'
+  duration?: string;
+  [key: string]: unknown;
+};
 export default function VodsSection({ limit }: { limit?: number }) {
   // sample schedule-derived games (mirrors ScheduleSection overview games)
   const games = [
@@ -25,31 +39,31 @@ export default function VodsSection({ limit }: { limit?: number }) {
   ];
 
   const sampleVods = [
-    { id: 1, title: "Epic Valorant Clutch", url: "#", game: "Valorant", type: "highlights", creator: "SkullGamingHQ", view: 1345 },
-    { id: 2, title: "Apex Ranked Sweat", url: "#", game: "Apex Legends", type: "vods", creator: "CanadienDragon", view: 842 },
-    { id: 3, title: "Call of Duty Snipes", url: "#", game: "Call of Duty", type: "clips", creator: "GuestClipper", view: 210 },
-    { id: 4, title: "Cyberpunk Highlights", url: "#", game: "Cyberpunk 2077", type: "highlights", creator: "NightRider", view: 412 },
-    { id: 5, title: "Fortnite Build Battle", url: "#", game: "Fortnite", type: "vods", creator: "BuilderBob", view: 98 },
-    { id: 6, title: "Minecraft Speedrun", url: "#", game: "Minecraft", type: "highlights", creator: "Speedy", view: 2300 },
-    { id: 7, title: "Overwatch 2 Play of the Match", url: "#", game: "Overwatch 2", type: "clips", creator: "ProPlayer", view: 540 },
-    { id: 8, title: "League Pentakill", url: "#", game: "League of Legends", type: "highlights", creator: "LoLMaster", view: 760 },
-    { id: 9, title: "Dota 2 Comeback", url: "#", game: "Dota 2", type: "vods", creator: "CarryMain", view: 120 },
-    { id: 10, title: "Street Fighter 6 Combo", url: "#", game: "Street Fighter 6", type: "clips", creator: "ComboKing", view: 45 },
-    { id: 11, title: "GTA V Heist Moments", url: "#", game: "GTA V", type: "vods", creator: "Heister", view: 980 },
-    { id: 12, title: "Elden Ring Boss Fight", url: "#", game: "Elden Ring", type: "highlights", creator: "Tank", view: 670 },
-    { id: 13, title: "Among Us Sus Moments", url: "#", game: "Among Us", type: "clips", creator: "Imposter", view: 77 },
-    { id: 14, title: "Rocket League Aerials", url: "#", game: "Rocket League", type: "highlights", creator: "AerialAce", view: 151 },
-    { id: 15, title: "Rust Base Raid", url: "#", game: "Rust", type: "vods", creator: "Raider", view: 312 },
+    { id: '1', title: "Epic Valorant Clutch", url: "#", game: "Valorant", type: "highlights", creator: "SkullGamingHQ", view: 1345 },
+    { id: '2', title: "Apex Ranked Sweat", url: "#", game: "Apex Legends", type: "vods", creator: "CanadienDragon", view: 842 },
+    { id: '3', title: "Call of Duty Snipes", url: "#", game: "Call of Duty", type: "clips", creator: "GuestClipper", view: 210 },
+    { id: '4', title: "Cyberpunk Highlights", url: "#", game: "Cyberpunk 2077", type: "highlights", creator: "NightRider", view: 412 },
+    { id: '5', title: "Fortnite Build Battle", url: "#", game: "Fortnite", type: "vods", creator: "BuilderBob", view: 98 },
+    { id: '6', title: "Minecraft Speedrun", url: "#", game: "Minecraft", type: "highlights", creator: "Speedy", view: 2300 },
+    { id: '7', title: "Overwatch 2 Play of the Match", url: "#", game: "Overwatch 2", type: "clips", creator: "ProPlayer", view: 540 },
+    { id: '8', title: "League Pentakill", url: "#", game: "League of Legends", type: "highlights", creator: "LoLMaster", view: 760 },
+    { id: '9', title: "Dota 2 Comeback", url: "#", game: "Dota 2", type: "vods", creator: "CarryMain", view: 120 },
+    { id: '10', title: "Street Fighter 6 Combo", url: "#", game: "Street Fighter 6", type: "clips", creator: "ComboKing", view: 45 },
+    { id: '11', title: "GTA V Heist Moments", url: "#", game: "GTA V", type: "vods", creator: "Heister", view: 980 },
+    { id: '12', title: "Elden Ring Boss Fight", url: "#", game: "Elden Ring", type: "highlights", creator: "Tank", view: 670 },
+    { id: '13', title: "Among Us Sus Moments", url: "#", game: "Among Us", type: "clips", creator: "Imposter", view: 77 },
+    { id: '14', title: "Rocket League Aerials", url: "#", game: "Rocket League", type: "highlights", creator: "AerialAce", view: 151 },
+    { id: '15', title: "Rust Base Raid", url: "#", game: "Rust", type: "vods", creator: "Raider", view: 312 },
   ];
 
   // Display item used by the UI (uniform shape for sample data and fetched clips)
   type DisplayItem = {
-    id: string | number;
+    id: string;
     title: string;
     url: string;
     game: string;
-    creator?: string;
-    view?: number;
+    creator: string;
+    view: number;
     type: string;
   };
 
@@ -58,6 +72,7 @@ export default function VodsSection({ limit }: { limit?: number }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [clips, setClips] = useState<TwitchClip[] | null>(null);
+  const [videos, setVideos] = useState<TwitchVideo[] | null>(null);
 
   // simple debounce
   useEffect(() => {
@@ -86,17 +101,57 @@ export default function VodsSection({ limit }: { limit?: number }) {
     };
   }, [limit]);
 
-  const sourceItems: DisplayItem[] = clips && clips.length > 0 ? clips.map((c: TwitchClip) => ({
+  // fetch videos (VODs / highlights)
+  useEffect(() => {
+    let mounted = true;
+    async function fetchVideos() {
+      try {
+        const res = await fetch(`/api/twitch/videos?limit=${limit ?? 12}`);
+        if (!res.ok) throw new Error("videos fetch failed");
+        const j = await res.json();
+        if (!mounted) return;
+        setVideos(j.videos ?? []);
+      } catch {
+        if (!mounted) return;
+        setVideos([]);
+      }
+    }
+    fetchVideos();
+    return () => {
+      mounted = false;
+    };
+  }, [limit]);
+
+  const clipItems: DisplayItem[] = (clips && clips.length > 0) ? clips.map((c: TwitchClip) => ({
     id: c.id,
     title: (c.title as string) || "Untitled",
     url: (c.url as string) || (c.thumbnail_url as string) || "#",
-    // show view count in place of game_id when available (human-friendly)
     game: c.view_count !== undefined ? `${(c.view_count as number).toLocaleString()} views` : ((c.game_id as string) || "Clip"),
-    // who created the clip
+    // Note: only clips payloads include `creator_name` in Twitch's API — use it when present
     creator: (c.creator_name as string) || "Unknown",
     view: (c.view_count as number) || 0,
     type: "clips",
-  })) : (sampleVods as DisplayItem[]);
+  })) : [];
+
+  const videoItems: DisplayItem[] = (videos && videos.length > 0) ? videos.map((v: TwitchVideo) => {
+    const helixType = (v.type as string) || "upload";
+    const normalized = helixType === "highlight" ? "highlights" : "vods";
+    return {
+      id: v.id,
+      title: (v.title as string) || "Untitled",
+      url: (v.url as string) || (v.thumbnail_url as string) || "#",
+      game: v.view_count !== undefined ? `${(v.view_count as number).toLocaleString()} views` : (v.duration || "VOD"),
+      // Videos from Helix do not include `creator_name`; use the uploader fields instead
+      creator: (v.user_name as string) || (v.user_login as string) || "Unknown",
+      view: (v.view_count as number) || 0,
+      type: normalized,
+    } as DisplayItem;
+  }) : [];
+
+  let sourceItems: DisplayItem[] = clipItems.concat(videoItems);
+  if (sourceItems.length === 0) {
+    sourceItems = sampleVods as unknown as DisplayItem[];
+  }
 
   const filtered = useMemo(() => {
     return sourceItems.filter((v) => {

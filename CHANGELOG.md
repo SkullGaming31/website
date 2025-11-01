@@ -52,9 +52,8 @@ All notable changes to this repository are documented in this file. This changel
 
 ## Next recommended actions
 1. Add focused component tests for untested components (ScheduleSection, Header, Layout, and several pages) to raise line/function/branch coverage.
-2. Add MSW for centralized API mocking across node and jsdom tests.
-3. Add a CI (GitHub Actions) workflow to run tests and coverage on push/PR.
-4. Decide on git commit author identity and allow committing/pushing the current changes.
+2. Add a CI (GitHub Actions) workflow to run tests and coverage on push/PR.
+3. Decide on git commit author identity and allow committing/pushing the current changes.
 
 ---
 Generated automatically by developer tooling on 2025-11-01.

@@ -1,12 +1,7 @@
 export default function ServerMembers() {
   const members = [
-    { name: "Wraith", role: "Admin", joined: "2023-01-15", status: "Online" },
-    { name: "Cyberpunk", role: "Moderator", joined: "2023-02-20", status: "Online" },
-    { name: "Glitch", role: "VIP", joined: "2023-03-10", status: "Idle" },
-    { name: "Phoenix", role: "Member", joined: "2023-05-01", status: "Offline" },
-    { name: "Rogue", role: "Member", joined: "2023-06-18", status: "Online" },
+    { name: "modvlog", role: "Moderator", joined: "2023-02-20", status: "Offline" }
   ];
-
   const statusColor = (s: string) => {
     switch (s) {
       case "Online":

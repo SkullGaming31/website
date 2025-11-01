@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prepare": "husky install",
     "test": "vitest",
     "test:watch": "vitest --watch",
     "test:coverage": "vitest run --coverage",
@@ -26,6 +27,7 @@
     "@vitest/coverage-v8": "^4.0.6",
     "eslint": "^9",
     "eslint-config-next": "16.0.0",
+    "husky": "^9.1.7",
     "jsdom": "^22.1.0",
     "tailwindcss": "^4",
     "typescript": "^5",

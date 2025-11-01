@@ -1,6 +1,6 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-# Run tests on push and abort if they fail
-echo "Running tests before push..."
-npm test
+# Run tests on push and abort if they fail (use Node runner for cross-platform reliability)
+echo "Running tests before push via Node runner..."
+node ./scripts/prepush.js

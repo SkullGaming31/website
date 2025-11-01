@@ -1,0 +1,31 @@
+@import "tailwindcss";
+
+:root {
+  /* Primary theme colors: top (purple) -> bottom (black) gradient */
+  --background: linear-gradient(180deg, #5b21b6 0%, #000000 100%);
+  --foreground: #ededed;
+}
+
+/* theme helpers removed — keep standard CSS variables in :root */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  /* Use the CSS variable (a gradient) as the page background. */
+  background: var(--background) no-repeat fixed;
+  background-size: cover;
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.hero-gradient {
+  /* Hero-specific gradient matching the global theme */
+  background: linear-gradient(180deg,#5b21b6 0%, #000000 100%);
+}

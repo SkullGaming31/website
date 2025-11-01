@@ -1,0 +1,81 @@
+import { NextResponse } from "next/server";
+
+// In-memory cache for token and clips
+let tokenCache: { token?: string; expiresAt?: number } = {};
+let clipsCache: { data?: any; fetchedAt?: number } = {};
+
+const CHANNEL = "skullgaminghq";
+const TOKEN_TTL_BUFFER = 30; // seconds
+const CLIPS_TTL = 30; // seconds
+
+async function getAppAccessToken(clientId: string, clientSecret: string) {
+  const now = Date.now() / 1000;
+  if (tokenCache.token && tokenCache.expiresAt && tokenCache.expiresAt - TOKEN_TTL_BUFFER > now) {
+    return tokenCache.token;
+  }
+
+  const url = `https://id.twitch.tv/oauth2/token?client_id=${encodeURIComponent(
+    clientId
+  )}&client_secret=${encodeURIComponent(clientSecret)}&grant_type=client_credentials`;
+
+  const res = await fetch(url, { method: "POST" });
+  if (!res.ok) throw new Error(`token fetch failed: ${res.status}`);
+  const j = await res.json();
+  const access_token = j.access_token;
+  const expires_in = j.expires_in || 3600;
+  tokenCache = { token: access_token, expiresAt: now + expires_in };
+  return access_token;
+}
+
+export async function GET(request: Request) {
+  const clientId = process.env.TWITCH_CLIENT_ID;
+  const clientSecret = process.env.TWITCH_CLIENT_SECRET;
+
+  if (!clientId || !clientSecret) {
+    return NextResponse.json({ error: "no_twitch_credentials", clips: [] });
+  }
+
+  const urlObj = new URL(request.url);
+  const limitParam = urlObj.searchParams.get("limit") || "12";
+  const limit = Math.min(50, parseInt(limitParam, 10) || 12);
+
+  const now = Date.now();
+  if (clipsCache.data && clipsCache.fetchedAt && now - clipsCache.fetchedAt < CLIPS_TTL * 1000) {
+    return NextResponse.json(clipsCache.data);
+  }
+
+  try {
+    const token = await getAppAccessToken(clientId, clientSecret);
+
+    // resolve broadcaster id
+    const u = await fetch(`https://api.twitch.tv/helix/users?login=${encodeURIComponent(CHANNEL)}`, {
+      headers: { Authorization: `Bearer ${token}`, "Client-Id": clientId },
+    });
+    if (!u.ok) throw new Error(`users fetch failed: ${u.status}`);
+    const uj = await u.json();
+    const user = Array.isArray(uj.data) && uj.data.length > 0 ? uj.data[0] : null;
+    if (!user) return NextResponse.json({ error: "user_not_found", clips: [] }, { status: 404 });
+    const broadcaster_id = user.id;
+
+    const clipsRes = await fetch(
+      `https://api.twitch.tv/helix/clips?broadcaster_id=${encodeURIComponent(broadcaster_id)}&first=${encodeURIComponent(
+        String(limit)
+      )}`,
+      { headers: { Authorization: `Bearer ${token}`, "Client-Id": clientId } }
+    );
+
+    if (!clipsRes.ok) {
+      const t = await clipsRes.text();
+      return NextResponse.json({ error: `helix_clips_${clipsRes.status}`, detail: t }, { status: 502 });
+    }
+
+    const cj = await clipsRes.json();
+    // cj.data is array of clips
+    const payload = { clips: cj.data ?? [], fetchedAt: new Date().toISOString() };
+
+    clipsCache = { data: payload, fetchedAt: Date.now() };
+    return NextResponse.json(payload);
+  } catch (err: any) {
+    return NextResponse.json({ error: err?.message || String(err), clips: [] }, { status: 500 });
+  }
+}

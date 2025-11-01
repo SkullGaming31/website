@@ -72,6 +72,14 @@ export async function GET() {
 
     if (!sres.ok) {
       const t = await sres.text();
+      // If Twitch returns 404 "segments were not found", treat this as an empty schedule
+      // instead of surfacing a 502 to callers. This lets the frontend show a friendly
+      // "No scheduled stream" message while keeping other errors as failures.
+      if (sres.status === 404) {
+        const emptyPayload = { vacation: null, segments: [], fetchedAt: new Date().toISOString() };
+        scheduleCache = { data: emptyPayload, fetchedAt: Date.now() };
+        return NextResponse.json(emptyPayload);
+      }
       return NextResponse.json({ error: `helix_schedule_${sres.status}`, detail: t }, { status: 502 });
     }
 

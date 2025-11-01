@@ -36,11 +36,21 @@ export default function TwitchPlayer({
 
   const isDevHost = runtimeHost === "localhost" || runtimeHost === "127.0.0.1";
 
-  const parents = Array.from(new Set([...providedParents, runtimeHost].filter(Boolean))).filter((p) => {
-    // If not on a local dev host, strip localhost entries to avoid sending them in prod.
-    if (!isDevHost && (p === "localhost" || p.startsWith("127."))) return false;
-    return true;
-  });
+  // Always include the runtime host when available. In non-dev environments, ensure the
+  // known production/vercel host is included so Twitch will accept the embeddable parent.
+  const PROD_PARENT = "website-kappa-ecru-75.vercel.app";
+
+  let parents = Array.from(new Set([...providedParents, runtimeHost].filter(Boolean)));
+
+  if (!isDevHost) {
+    // Remove localhost/127 entries if present
+    parents = parents.filter((p) => p !== "localhost" && !p.startsWith("127."));
+    // Ensure the production hostname is present so embeds on Vercel will be allowed
+    if (!parents.includes(PROD_PARENT)) parents.push(PROD_PARENT);
+  } else {
+    // In dev, keep localhost and runtimeHost as-is
+    parents = parents;
+  }
 
   const dataParentAttr = parents.join(",");
   const parentQuery = parents.map((p) => `parent=${encodeURIComponent(p)}`).join("&");

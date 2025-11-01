@@ -15,7 +15,6 @@ export default function Header() {
 
             <nav className="hidden md:flex gap-6 ml-8 text-sm">
             <Link href="/" className="hover:underline">Home</Link>
-            <Link href="/dashboard" className="hover:underline">Dashboard</Link>
             <Link href="/schedule" className="hover:underline">Schedule</Link>
             <Link href="/videos" className="hover:underline">Videos</Link>
             <Link href="/about" className="hover:underline">About</Link>

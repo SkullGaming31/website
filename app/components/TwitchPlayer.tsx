@@ -11,7 +11,7 @@ type Props = {
 
 export default function TwitchPlayer({
   channel,
-  parent = ["localhost", "website-kappa-ecru-75.vercel.app"],
+  parent,
   width = "100%",
   height = 480,
 }: Props) {
@@ -26,23 +26,38 @@ export default function TwitchPlayer({
     }
   }, []);
 
-  // The Twitch embed expects a div with id and data attributes. We include the `parent` param
-  // as a query param on the iframe when the script runs.
+  // Compute runtime parents. We include the current hostname (window.location.hostname)
+  // so the embed works correctly in production and preview deployments. Only include
+  // 'localhost' when running on a dev host (e.g. hostname === 'localhost'). If a
+  // `parent` prop is provided it will be merged (but we won't force localhost in prod).
+  const runtimeHost = typeof window !== "undefined" ? window.location.hostname : "";
+
+  const providedParents = Array.isArray(parent) ? parent : parent ? [parent] : [];
+
+  const isDevHost = runtimeHost === "localhost" || runtimeHost === "127.0.0.1";
+
+  const parents = Array.from(new Set([...providedParents, runtimeHost].filter(Boolean))).filter((p) => {
+    // If not on a local dev host, strip localhost entries to avoid sending them in prod.
+    if (!isDevHost && (p === "localhost" || p.startsWith("127."))) return false;
+    return true;
+  });
+
+  const dataParentAttr = parents.join(",");
+  const parentQuery = parents.map((p) => `parent=${encodeURIComponent(p)}`).join("&");
+
   return (
     <div
       id="twitch-embed"
       className="w-full"
       style={{ width: typeof width === "number" ? `${width}px` : width }}
       data-channel={channel}
-      data-parent={Array.isArray(parent) ? parent.join(",") : parent}
+      data-parent={dataParentAttr}
     >
       {/* Fallback iframe for environments where the embed script didn't run yet */}
       <iframe
         title={`Twitch stream ${channel}`}
-        src={`https://player.twitch.tv/?channel=${encodeURIComponent(channel)}&${
-          Array.isArray(parent)
-            ? parent.map((p) => `parent=${encodeURIComponent(p)}`).join("&")
-            : `parent=${encodeURIComponent(parent)}`
+        src={`https://player.twitch.tv/?channel=${encodeURIComponent(channel)}${
+          parentQuery ? `&${parentQuery}` : ""
         }&muted=false&autoplay=false`}
         allowFullScreen
         style={{ border: 0 }}

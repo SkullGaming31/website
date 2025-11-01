@@ -1,8 +1,38 @@
 import { NextResponse } from "next/server";
 
+// Types
+type TwitchStream = {
+  id?: string;
+  user_id?: string;
+  user_login?: string;
+  user_name?: string;
+  game_id?: string;
+  game_name?: string;
+  type?: string;
+  title?: string;
+  tags?: string[];
+  viewer_count?: number;
+  started_at?: string;
+  language?: string;
+  thumbnail_url?: string;
+  tag_ids?: string[];
+  is_mature?: boolean;
+  [key: string]: unknown;
+};
+
+type StreamPayload = {
+  live: boolean;
+  channel: string;
+  title?: string;
+  viewer_count?: number;
+  started_at?: string;
+  game_name?: string;
+  cachedAt: string;
+};
+
 // Simple in-memory cache for token and last stream response
 let tokenCache: { token?: string; expiresAt?: number } = {};
-let streamCache: { data?: any; fetchedAt?: number } = {};
+let streamCache: { data?: StreamPayload; fetchedAt?: number } = {};
 
 const CHANNEL = "skullgaminghq"; // change if needed
 const TOKEN_TTL_BUFFER = 30; // seconds buffer
@@ -58,18 +88,28 @@ export async function GET() {
       return NextResponse.json({ live: false, error: `helix_error_${res.status}`, detail: text }, { status: 502 });
     }
 
-    const j = await res.json();
-    const live = Array.isArray(j.data) && j.data.length > 0;
-    const data = j.data && j.data[0];
-    const payload = {
+    const j: unknown = await res.json();
+    const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null;
+
+    let live = false;
+    let first: TwitchStream | undefined;
+    if (isRecord(j)) {
+      const maybeData = j["data"];
+      if (Array.isArray(maybeData) && maybeData.length > 0) {
+        live = true;
+        first = maybeData[0] as unknown as TwitchStream;
+      }
+    }
+
+    const payload: StreamPayload = {
       live: !!live,
       channel: CHANNEL,
-      ...(live
+      ...(live && first
         ? {
-            title: data.title,
-            viewer_count: data.viewer_count,
-            started_at: data.started_at,
-            game_name: data.game_name,
+            title: first.title as string | undefined,
+            viewer_count: first.viewer_count as number | undefined,
+            started_at: first.started_at as string | undefined,
+            game_name: first.game_name as string | undefined,
           }
         : {}),
       cachedAt: new Date().toISOString(),
@@ -77,7 +117,10 @@ export async function GET() {
 
     streamCache = { data: payload, fetchedAt: Date.now() };
     return NextResponse.json(payload);
-  } catch (err: any) {
-    return NextResponse.json({ live: false, error: err?.message || String(err) }, { status: 500 });
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      return NextResponse.json({ live: false, error: err.message }, { status: 500 });
+    }
+    return NextResponse.json({ live: false, error: String(err) }, { status: 500 });
   }
 }

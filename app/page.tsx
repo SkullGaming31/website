@@ -2,13 +2,18 @@ import TwitchPlayer from "./components/TwitchPlayer";
 import VodsSection from "./components/VodsSection";
 import ScheduleSection from "./components/ScheduleSection";
 import CallToAction from "./components/CallToAction";
+import GameHeroBackground from "./components/GameHeroBackground";
 
 export default function Home() {
   const channel = "skullgaminghq";
 
   return (
     <>
-  <div className="min-h-screen font-sans flex items-center">
+  <div className="min-h-screen font-sans flex items-center relative">
+      {/* decorative watermark layer (non-interactive) */}
+      <div className="watermark-layer" aria-hidden="true" />
+      {/* homepage hero background (client-only, animated) */}
+      <GameHeroBackground />
       <main className="w-full max-w-6xl mx-auto py-20 px-8">
         <div className="grid grid-cols-12 gap-8 items-center">
           {/* Left column: welcome text */}

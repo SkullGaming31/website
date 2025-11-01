@@ -2,24 +2,24 @@
 
 import { useMemo, useState, useEffect } from "react";
 
+// Clip type (frontend subset of server's TwitchClip)
+type TwitchClip = {
+  id: string;
+  title?: string;
+  url?: string;
+  thumbnail_url?: string;
+  game_id?: string;
+  [key: string]: unknown;
+};
+
 export default function VodsSection({ limit }: { limit?: number }) {
   // sample schedule-derived games (mirrors ScheduleSection overview games)
   const games = [
-    "Valorant",
-    "Apex Legends",
-    "Call of Duty",
-    "Cyberpunk 2077",
-    "Fortnite",
+    "Space Engineers",
     "Minecraft",
-    "Overwatch 2",
-    "League of Legends",
-    "Dota 2",
-    "Street Fighter 6",
     "GTA V",
-    "Elden Ring",
-    "Among Us",
-    "Rocket League",
     "Rust",
+    "Vigor"
   ];
 
   const sampleVods = [
@@ -44,7 +44,7 @@ export default function VodsSection({ limit }: { limit?: number }) {
   const [selectedType, setSelectedType] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [clips, setClips] = useState<any[] | null>(null);
+  const [clips, setClips] = useState<TwitchClip[] | null>(null);
 
   // simple debounce
   useEffect(() => {
@@ -62,7 +62,7 @@ export default function VodsSection({ limit }: { limit?: number }) {
         const j = await res.json();
         if (!mounted) return;
         setClips(j.clips ?? []);
-      } catch (e) {
+      } catch {
         if (!mounted) return;
         setClips([]); // fallback to sample later
       }
@@ -73,11 +73,11 @@ export default function VodsSection({ limit }: { limit?: number }) {
     };
   }, [limit]);
 
-  const sourceItems = clips && clips.length > 0 ? clips.map((c) => ({
+  const sourceItems = clips && clips.length > 0 ? clips.map((c: TwitchClip) => ({
     id: c.id,
-    title: c.title,
-    url: c.url || c.thumbnail_url,
-    game: c.game_id || "Clip",
+    title: (c.title as string) || "Untitled",
+    url: (c.url as string) || (c.thumbnail_url as string) || "#",
+    game: (c.game_id as string) || "Clip",
     type: "clips",
   })) : sampleVods;
 

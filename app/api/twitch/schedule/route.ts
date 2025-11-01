@@ -1,11 +1,29 @@
 import { NextResponse } from "next/server";
 
+// Types for Twitch schedule response
+type TwitchCategory = { id?: string; name?: string; [key: string]: unknown };
+type TwitchSegment = {
+  id: string;
+  start_time?: string;
+  end_time?: string;
+  title?: string;
+  canceled_until?: string | null;
+  category?: TwitchCategory;
+  is_recurring?: boolean;
+  [key: string]: unknown;
+};
+
+type SchedulePayload = {
+  vacation: unknown | null;
+  segments: TwitchSegment[];
+  fetchedAt: string;
+};
+
 // Small in-memory cache
 let tokenCache: { token?: string; expiresAt?: number } = {};
-let scheduleCache: { data?: any; fetchedAt?: number } = {};
+let scheduleCache: { data?: SchedulePayload; fetchedAt?: number } = {};
 
 // Broadcaster numeric ID (recommended by user). This ID can be used for Helix endpoints directly.
-const CHANNEL = "skullgaminghq";
 const BROADCASTER_ID = "1155035316";
 const TOKEN_TTL_BUFFER = 30; // seconds
 const SCHEDULE_TTL = 30; // seconds
@@ -57,18 +75,37 @@ export async function GET() {
       return NextResponse.json({ error: `helix_schedule_${sres.status}`, detail: t }, { status: 502 });
     }
 
-    const sj = await sres.json();
+    const sj: unknown = await sres.json();
 
     // sj contains "vacation" (possibly null) and "segments" array
-    const payload = {
-      vacation: sj.vacation ?? null,
-      segments: sj.data?.segments ?? sj.segments ?? sj.data ?? sj, // best-effort
-      fetchedAt: new Date().toISOString(),
-    };
+    const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null;
+
+    let vacation: unknown | null = null;
+    let segments: TwitchSegment[] = [];
+
+    if (isRecord(sj)) {
+      // Try sj.data structure first
+      const dataCandidate = sj["data"] ?? sj;
+      if (isRecord(dataCandidate)) {
+        vacation = dataCandidate["vacation"] ?? null;
+        const segs = dataCandidate["segments"] ?? dataCandidate["data"] ?? dataCandidate;
+        if (Array.isArray(segs)) {
+          segments = segs as unknown as TwitchSegment[];
+        }
+      } else if (Array.isArray(dataCandidate)) {
+        // sj is an array of segments
+        segments = dataCandidate as unknown as TwitchSegment[];
+      }
+    }
+
+    const payload: SchedulePayload = { vacation, segments, fetchedAt: new Date().toISOString() };
 
     scheduleCache = { data: payload, fetchedAt: Date.now() };
     return NextResponse.json(payload);
-  } catch (err: any) {
-    return NextResponse.json({ error: err?.message || String(err), vacation: null, segments: [] }, { status: 500 });
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      return NextResponse.json({ error: err.message, vacation: null, segments: [] }, { status: 500 });
+    }
+    return NextResponse.json({ error: String(err), vacation: null, segments: [] }, { status: 500 });
   }
 }

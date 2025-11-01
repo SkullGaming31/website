@@ -1,8 +1,34 @@
 import { NextResponse } from "next/server";
 
+// Types
+type TwitchClip = {
+  id: string;
+  url: string;
+  embed_url?: string;
+  broadcaster_id?: string;
+  broadcaster_name?: string;
+  creator_id?: string;
+  creator_name?: string;
+  video_id?: string;
+  game_id?: string;
+  language?: string;
+  title?: string;
+  view_count?: number;
+  created_at?: string;
+  thumbnail_url?: string;
+  duration?: number;
+  vod_offset?: number;
+  [key: string]: unknown;
+};
+
+type ClipsPayload = {
+  clips: TwitchClip[];
+  fetchedAt: string;
+};
+
 // In-memory cache for token and clips
 let tokenCache: { token?: string; expiresAt?: number } = {};
-let clipsCache: { data?: any; fetchedAt?: number } = {};
+let clipsCache: { data?: ClipsPayload; fetchedAt?: number } = {};
 
 const CHANNEL = "skullgaminghq";
 const TOKEN_TTL_BUFFER = 30; // seconds
@@ -69,13 +95,26 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: `helix_clips_${clipsRes.status}`, detail: t }, { status: 502 });
     }
 
-    const cj = await clipsRes.json();
-    // cj.data is array of clips
-    const payload = { clips: cj.data ?? [], fetchedAt: new Date().toISOString() };
+    const cj: unknown = await clipsRes.json();
+    // try to safely extract 'data' array from the response
+    const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null;
+    let clipsArray: TwitchClip[] = [];
+    if (isRecord(cj)) {
+      const maybeData = cj["data"];
+      if (Array.isArray(maybeData)) {
+        // assert element type (we keep fields optional above so direct assertion is safe)
+        clipsArray = maybeData as unknown as TwitchClip[];
+      }
+    }
+
+    const payload: ClipsPayload = { clips: clipsArray, fetchedAt: new Date().toISOString() };
 
     clipsCache = { data: payload, fetchedAt: Date.now() };
     return NextResponse.json(payload);
-  } catch (err: any) {
-    return NextResponse.json({ error: err?.message || String(err), clips: [] }, { status: 500 });
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      return NextResponse.json({ error: err.message, clips: [] }, { status: 500 });
+    }
+    return NextResponse.json({ error: String(err), clips: [] }, { status: 500 });
   }
 }

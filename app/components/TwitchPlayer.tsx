@@ -4,14 +4,14 @@ import { useEffect } from "react";
 
 type Props = {
   channel: string;
-  parent?: string; // hostname for Twitch embed parent param (defaults to "localhost")
+  parent?: string | string[];
   width?: number | string;
   height?: number | string;
 };
 
 export default function TwitchPlayer({
   channel,
-  parent = "localhost",
+  parent = ["localhost", "website-kappa-ecru-75.vercel.app"],
   width = "100%",
   height = 480,
 }: Props) {
@@ -34,16 +34,18 @@ export default function TwitchPlayer({
       className="w-full"
       style={{ width: typeof width === "number" ? `${width}px` : width }}
       data-channel={channel}
-      data-parent={parent}
+      data-parent={Array.isArray(parent) ? parent.join(",") : parent}
     >
       {/* Fallback iframe for environments where the embed script didn't run yet */}
       <iframe
         title={`Twitch stream ${channel}`}
-        src={`https://player.twitch.tv/?channel=${encodeURIComponent(
-          channel
-        )}&parent=${encodeURIComponent(parent)}&muted=false&autoplay=false`}
+        src={`https://player.twitch.tv/?channel=${encodeURIComponent(channel)}&${
+          Array.isArray(parent)
+            ? parent.map((p) => `parent=${encodeURIComponent(p)}`).join("&")
+            : `parent=${encodeURIComponent(parent)}`
+        }&muted=false&autoplay=false`}
         allowFullScreen
-        frameBorder={0}
+        style={{ border: 0 }}
         width={typeof width === "number" ? width : "100%"}
         height={height}
       />

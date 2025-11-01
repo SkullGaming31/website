@@ -11,7 +11,7 @@ export default function Footer() {
             </svg>
           </a>
 
-          <a href="https://www.youtube.com/@SkullGamingHQ" aria-label="youtube" className="opacity-80 hover:opacity-100" target="_blank" rel="noopener noreferrer">
+          <a href="https://www.youtube.com/@canadiendragon1" aria-label="youtube" className="opacity-80 hover:opacity-100" target="_blank" rel="noopener noreferrer">
             <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M23.5 6.2s-.2-1.7-.8-2.4c-.8-.9-1.7-.9-2.1-1C16.6 2.5 12 2.5 12 2.5h-.1s-4.6 0-8.6.3c-.5 0-1.4.1-2.1 1C.7 4.6.5 6.2.5 6.2S.2 8.4.2 10.6v2.8c0 2.2.3 4.4.3 4.4s.2 1.7.8 2.4c.8.9 1.9.9 2.4 1 1.8.2 7.6.3 7.6.3s4.6 0 8.6-.3c.5 0 1.4-.1 2.1-1 .6-.7.8-2.4.8-2.4s.3-2.2.3-4.4v-2.8c0-2.2-.3-4.4-.3-4.4zM9.8 15.6V8.4l6.5 3.6-6.5 3.6z" />
             </svg>

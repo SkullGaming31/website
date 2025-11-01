@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="Site watermark">
+  <rect width="100%" height="100%" fill="none" />
+  <g fill="none" stroke="#ffffff" stroke-opacity="0.12" stroke-width="28" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Simple, original initials mark: SG -->
+    <path d="M120 360 L120 160 L240 160 L240 240 L180 240" />
+    <path d="M300 200 C340 160, 420 160, 420 240 C420 320, 340 320, 300 280 C280 260, 300 240, 320 240" />
+  </g>
+</svg>

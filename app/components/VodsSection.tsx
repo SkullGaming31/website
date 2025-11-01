@@ -42,6 +42,17 @@ export default function VodsSection({ limit }: { limit?: number }) {
     { id: 15, title: "Rust Base Raid", url: "#", game: "Rust", type: "vods", creator: "Raider", view: 312 },
   ];
 
+  // Display item used by the UI (uniform shape for sample data and fetched clips)
+  type DisplayItem = {
+    id: string | number;
+    title: string;
+    url: string;
+    game: string;
+    creator?: string;
+    view?: number;
+    type: string;
+  };
+
   const [selectedGame, setSelectedGame] = useState<string>("all");
   const [selectedType, setSelectedType] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState("");
@@ -75,7 +86,7 @@ export default function VodsSection({ limit }: { limit?: number }) {
     };
   }, [limit]);
 
-  const sourceItems = clips && clips.length > 0 ? clips.map((c: TwitchClip) => ({
+  const sourceItems: DisplayItem[] = clips && clips.length > 0 ? clips.map((c: TwitchClip) => ({
     id: c.id,
     title: (c.title as string) || "Untitled",
     url: (c.url as string) || (c.thumbnail_url as string) || "#",
@@ -85,7 +96,7 @@ export default function VodsSection({ limit }: { limit?: number }) {
     creator: (c.creator_name as string) || "Unknown",
     view: (c.view_count as number) || 0,
     type: "clips",
-  })) : sampleVods;
+  })) : (sampleVods as DisplayItem[]);
 
   const filtered = useMemo(() => {
     return sourceItems.filter((v) => {
@@ -135,11 +146,11 @@ export default function VodsSection({ limit }: { limit?: number }) {
       </div>
 
       <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {toShow.map((v) => (
+        {toShow.map((v: DisplayItem) => (
           <a key={v.id} href={v.url} className="block bg-zinc-900 rounded-md p-4">
             <div className="h-40 bg-zinc-800 rounded-md mb-3" />
             <div className="text-white font-medium">{v.title}</div>
-            <div className="text-sm text-purple-200">{(v as any).creator ? `${(v as any).creator} • ` : ""}{v.game} • {v.type}</div>
+            <div className="text-sm text-purple-200">{v.creator ? `${v.creator} • ` : ""}{v.game} • {v.type}</div>
           </a>
         ))}
 

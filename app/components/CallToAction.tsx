@@ -1,3 +1,5 @@
+import Button from "./Button";
+
 export default function CallToAction() {
   return (
     <section className="w-full py-12">
@@ -7,7 +9,7 @@ export default function CallToAction() {
           <p className="mt-3 text-sm md:text-base max-w-xl mx-auto">Become part of the HQ on Discord. Chat with other fans, get stream notifications, and participate in community events.</p>
 
           <div className="mt-6">
-            <a href="https://discord.com/invite/6TGV75sDjW" className="inline-block bg-white text-purple-700 font-semibold px-6 py-3 rounded-md">Join Discord</a>
+            <Button href="https://discord.com/invite/6TGV75sDjW" external className="px-6 py-3">Join Discord</Button>
           </div>
         </div>
       </div>

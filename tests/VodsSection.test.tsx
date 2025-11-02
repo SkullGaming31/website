@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import VodsSection from '../app/components/VodsSection';
 import { vi, describe, it, expect, afterEach } from 'vitest';
 import { server } from '../test/fetchMock';
@@ -27,5 +27,28 @@ describe('VodsSection', () => {
     render(<VodsSection limit={5} />);
 
     await waitFor(() => expect(screen.getByText(/Epic Valorant Clutch/i)).toBeInTheDocument());
+  });
+
+  it('renders videos from the API when available', async () => {
+    server.use(server.respondWith('/api/twitch/videos', 200, { videos: [
+      { id: 'v1', title: 'Video One', user_name: 'StreamerX', view_count: 500, type: 'highlight', url: 'https://videos/v1', duration: '12:34' }
+    ] }));
+
+    render(<VodsSection limit={5} />);
+
+    await waitFor(() => expect(screen.getByText(/Video One/i)).toBeInTheDocument());
+    const link = screen.getByRole('link', { name: /Video One/i }) as HTMLAnchorElement;
+    expect(link.href).toContain('videos/v1');
+  });
+
+  it('shows empty state when filters remove all items (debounced search)', async () => {
+    render(<VodsSection limit={5} />);
+
+    // type a search term that won't match sample data (debounced in component)
+    const input = screen.getByPlaceholderText(/Search videos.../i) as HTMLInputElement;
+    fireEvent.change(input, { target: { value: 'this-wont-match-anything-xyz' } });
+
+    // wait for debounce (component uses 250ms) and for the empty state to appear
+    await waitFor(() => expect(screen.getByText(/No videos match the selected filters./i)).toBeInTheDocument(), { timeout: 2000 });
   });
 });

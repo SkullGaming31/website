@@ -6,7 +6,7 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
             <div className="md:text-left">
               <h1 className="text-4xl font-bold text-white">About Skull</h1>
-              <p className="mt-3 text-purple-200 max-w-2xl mx-auto md:mx-0">Welcome to the HQ! I'm a passionate gamer, content creator, and community builder who's been dominating the digital battlefield for over a decade. From clutch plays to epic fails, I share it all with my amazing community.</p>
+              <p className="mt-3 text-purple-200 max-w-2xl mx-auto md:mx-0">Welcome to the HQ! I&apos;m a passionate gamer, content creator, and community builder who&apos;s been dominating the digital battlefield for over a decade. From clutch plays to epic fails, I share it all with my amazing community.</p>
               <div className="mt-6 flex justify-center md:justify-start gap-4">
                 {/* <a href="#" className="bg-purple-600 text-white px-5 py-2 rounded-md">Join the Squad</a>
                 <a href="#" className="border border-zinc-700 text-purple-100 px-5 py-2 rounded-md">Support Me</a> */}
@@ -23,7 +23,7 @@ export default function AboutPage() {
 
         <section className="bg-zinc-900 rounded-xl p-6 mb-6 text-center">
           <h2 className="text-2xl font-semibold text-white mb-3">Main Games</h2>
-          <p className="text-purple-200 mb-4">What you'll see me playing on stream</p>
+          <p className="text-purple-200 mb-4">What you&apos;ll see me playing on stream</p>
           <div className="flex justify-center">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="bg-zinc-800 rounded-md p-4 text-center">
@@ -50,12 +50,42 @@ export default function AboutPage() {
         </div>
 
   <section className="bg-zinc-900 rounded-xl p-6 mb-6 space-y-4 text-center">
-          <p className="text-purple-200">I enjoy gaming with friends, I'm a hobby programmer currently creating a Twitch<a href="https://github.com/skullgaming31/opendevbot">(OpenDevBot)</a> and Discord<a href="https://github.com/skullgaming31/opendevbot">(DragonBot)</a>bot along with this website with the help of AI (GitHub Copilot)</p>
+          <p className="text-purple-200">I enjoy gaming with friends, I&apos;m a hobby programmer currently creating a Twitch<a href="https://github.com/skullgaming31/opendevbot">(OpenDevBot)</a> and Discord<a href="https://github.com/skullgaming31/opendevbot">(DragonBot)</a>bot along with this website with the help of AI (GitHub Copilot)</p>
         </section>
 
         <section className="bg-zinc-900 rounded-xl p-6 mb-6 text-center">
           <h2 className="text-2xl font-semibold text-white mb-3">Contact</h2>
           <p className="text-purple-200">For business inquiries or partnerships, email <a href="mailto:skullgamingg31@gmail.com" className="underline">skullgamingg31@gmail.com</a></p>
+        </section>
+
+        <section className="bg-zinc-900 rounded-xl p-6 mb-6">
+          <h2 className="text-2xl font-semibold text-white mb-4 text-center">FAQ</h2>
+          <div className="space-y-3 max-w-3xl mx-auto text-purple-200">
+            <details className="bg-zinc-800 rounded-md p-4">
+              <summary className="cursor-pointer font-medium">How often do you stream?</summary>
+              <p className="mt-2 text-sm">Currently on a hiatus from streaming but hopeing to come back to stream sometime in the near future, keep an eye on socials for the return announcement</p>
+            </details>
+
+            <details className="bg-zinc-800 rounded-md p-4">
+              <summary className="cursor-pointer font-medium">How can I join the Discord?</summary>
+              <p className="mt-2 text-sm">Click the &quot;Join Discord&quot; button in the header or footer to join. Read the #rules channel after joining to get full access.</p>
+            </details>
+
+            <details className="bg-zinc-800 rounded-md p-4">
+              <summary className="cursor-pointer font-medium">How do I submit a clip or highlight?</summary>
+              <p className="mt-2 text-sm">Post clips in the #clips channel on Discord or use the VODs page to find and submit highlights.</p>
+            </details>
+
+            <details className="bg-zinc-800 rounded-md p-4">
+              <summary className="cursor-pointer font-medium">Can I sponsor or partner with SkullGamingHQ?</summary>
+              <p className="mt-2 text-sm">Yes — for sponsorship inquiries, email <a href="mailto:skullgamingg31@gmail.com" className="underline">skullgamingg31@gmail.com</a> with details about your proposal.</p>
+            </details>
+
+            <details className="bg-zinc-800 rounded-md p-4">
+              <summary className="cursor-pointer font-medium">Is the community friendly to new players?</summary>
+              <p className="mt-2 text-sm">Absolutely — we encourage players of all skill levels. Our moderators help maintain a welcoming environment.</p>
+            </details>
+          </div>
         </section>
 
       </main>

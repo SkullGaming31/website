@@ -3,6 +3,8 @@ import VodsSection from "./components/VodsSection";
 import ScheduleSection from "./components/ScheduleSection";
 import CallToAction from "./components/CallToAction";
 import GameHeroBackground from "./components/GameHeroBackground";
+import Button from "./components/Button";
+import { HeartIcon } from "@heroicons/react/24/solid";
 
 export default function Home() {
   const channel = "skullgaminghq";
@@ -23,8 +25,16 @@ export default function Home() {
             <p className="mt-6 max-w-lg text-lg text-purple-100">The official hub for SkullGamingHQ. Catch live streams, watch the latest VODs, and join the community.</p>
 
             <div className="mt-8 flex gap-4">
-              <a href={`https://twitch.tv/${channel}`} className="inline-block bg-purple-600 text-white px-6 py-3 rounded-md">Follow on Twitch</a>
-              <a href="#vods" className="inline-block border border-purple-600 text-purple-100 px-6 py-3 rounded-md">Enable notifications</a>
+              <Button
+                href={`https://twitch.tv/${channel}`}
+                external
+                aria-label={`Follow ${channel} on Twitch (opens in new tab)`}
+                className="px-6 py-3"
+              >
+                <HeartIcon aria-hidden="true" className="w-5 h-5 flex-shrink-0" />
+                <span className="font-semibold">Follow on Twitch</span>
+              </Button>
+              <Button href="#vods" variant="outline" className="px-6 py-3">Enable notifications</Button>
             </div>
           </div>
 

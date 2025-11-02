@@ -1,18 +1,19 @@
+export function statusColor(s: string) {
+  switch (s) {
+    case "Online":
+      return "bg-green-400";
+    case "Idle":
+      return "bg-yellow-400";
+    case "Offline":
+    default:
+      return "bg-zinc-600";
+  }
+}
+
 export default function ServerMembers() {
   const members = [
     { name: "modvlog", role: "Moderator", joined: "2023-02-20", status: "Offline" }
   ];
-  const statusColor = (s: string) => {
-    switch (s) {
-      case "Online":
-        return "bg-green-400";
-      case "Idle":
-        return "bg-yellow-400";
-      case "Offline":
-      default:
-        return "bg-zinc-600";
-    }
-  };
 
   return (
     <section className="my-8">

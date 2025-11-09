@@ -1,3 +1,33 @@
+# Changelog
+
+## 2025-11-09 — Features & fixes
+
+- Added Steam playtime integration:
+  - Server API: `app/api/steam-playtime/route.ts` — calls Steam Web API GetOwnedGames and returns playtime for Space Engineers (appid 244850) and Warframe (appid 230410).
+  - Includes both total playtime (`playtime_forever`) and last-2-weeks (`playtime_2weeks`) in minutes and converted hours.
+  - Client components:
+    - `app/components/SteamPlaytime.tsx` — combined view showing total and last-2-weeks hours for both games.
+    - `app/components/GamePlaytime.tsx` — per-game component used in the About page cards to display live hours.
+  - About page updated to render live playtime (SteamID set to provided ID for testing): `app/about/page.tsx`.
+
+- UI updates:
+  - Replaced hardcoded "Hours played" in About page cards for Warframe and Space Engineers with live values from Steam.
+  - Removed minute-bracket display; shows hours only.
+
+- Social links:
+  - Added Discord link/icon to header and footer (placeholder invite URL). Files: `app/components/Header.tsx`, `app/components/Footer.tsx`.
+
+- Tests / tooling:
+  - Created lightweight in-repo fetch mock and various component tests previously (see `tests/`), and added `.gitattributes` to normalize LF endings.
+
+Security notes
+- Do NOT commit secrets. Add your Steam API key locally in `.env.local` as `STEAM_API_KEY` (or `STEAM_API_KEY_DEV` / `STEAM_API_KEY_PROD` if you prefer environment-specific names). The API route reads from env and keeps the key server-side.
+
+How to test locally
+- Add `.env.local` with `STEAM_API_KEY=YOUR_KEY` and (optionally) `STEAM_PROFILE_ID=76561198153222775`.
+- Run dev server: `npm run dev` and open `/about` to view live playtime.
+
+If you want different behavior (on-page SteamID input, remove the About page SteamID, or swap minute/hour display), tell me and I can adjust it.
 # CHANGELOG
 
 All notable changes to this repository are documented in this file. This changelog was generated on 2025-11-01 and summarizes the edits and test work completed during the recent migration and improvements session.

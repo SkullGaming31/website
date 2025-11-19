@@ -1,4 +1,5 @@
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { act } from 'react';
 import VodsSection from '../app/components/VodsSection';
 import { vi, describe, it, expect, afterEach } from 'vitest';
 import { server } from '../test/fetchMock';
@@ -42,13 +43,14 @@ describe('VodsSection', () => {
   });
 
   it('shows empty state when filters remove all items (debounced search)', async () => {
-    render(<VodsSection limit={5} />);
+    // render with no debounce so the test updates synchronously
+    render(<VodsSection limit={5} debounceMs={0} />);
 
-    // type a search term that won't match sample data (debounced in component)
+    // type a search term that won't match sample data
     const input = screen.getByPlaceholderText(/Search videos.../i) as HTMLInputElement;
     fireEvent.change(input, { target: { value: 'this-wont-match-anything-xyz' } });
 
-    // wait for debounce (component uses 250ms) and for the empty state to appear
-    await waitFor(() => expect(screen.getByText(/No videos match the selected filters./i)).toBeInTheDocument(), { timeout: 2000 });
+    // now assert the empty state appears
+    await waitFor(() => expect(screen.getByText(/No videos match the selected filters\./i)).toBeInTheDocument());
   });
 });

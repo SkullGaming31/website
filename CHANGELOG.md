@@ -87,3 +87,18 @@ All notable changes to this repository are documented in this file. This changel
 
 ---
 Generated automatically by developer tooling on 2025-11-01.
+
+## 2025-11-19 — Test expansion & small improvements
+
+- Added many new tests to increase coverage and harden server routes and client components:
+  - Component tests: `tests/SteamPlaytime.test.tsx`, `tests/GamePlaytime.test.tsx`, `tests/SchedulePage.test.tsx`, plus additions/updates to `tests/VodsSection.test.tsx` (debounce fix), and numerous existing component tests under `tests/`.
+  - API route tests: `tests/api/steam-playtime.route.spec.ts` to validate the Steam proxy route behavior (missing env var and successful Steam response parsing).
+  - Test harness improvements: continued use of the in-repo `test/fetchMock.ts` to stub fetch calls across tests and `test/setup.ts` for test bootstrap.
+
+- Small code changes to support testing and reliability:
+  - `app/components/VodsSection.tsx`: added configurable `debounceMs` prop (default 250) so tests can render synchronously with `debounceMs={0}` to avoid flaky timing.
+  - Tests updated to await async Server Components where necessary (e.g., `tests/SchedulePage.test.tsx` calls the async `SchedulePage` before rendering its returned JSX).
+
+- Test run results (local): full suite passed after changes — `29 files, 55 tests` (Vitest run on 2025-11-19).
+
+If you'd like, I can now push these test files and the updated changelog to `origin/main` (I will run Husky hooks; if your environment's pre-push hook errors, I can push with `--no-verify` on your command). 

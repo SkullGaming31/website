@@ -28,7 +28,7 @@ type TwitchVideo = {
   duration?: string;
   [key: string]: unknown;
 };
-export default function VodsSection({ limit }: { limit?: number }) {
+export default function VodsSection({ limit, debounceMs = 250 }: { limit?: number, debounceMs?: number }) {
   // sample schedule-derived games (mirrors ScheduleSection overview games)
   const games = [
     "Space Engineers",
@@ -76,9 +76,9 @@ export default function VodsSection({ limit }: { limit?: number }) {
 
   // simple debounce
   useEffect(() => {
-    const t = setTimeout(() => setDebouncedSearch(searchTerm.trim().toLowerCase()), 250);
+    const t = setTimeout(() => setDebouncedSearch(searchTerm.trim().toLowerCase()), debounceMs);
     return () => clearTimeout(t);
-  }, [searchTerm]);
+  }, [searchTerm, debounceMs]);
 
   // fetch clips from server route
   useEffect(() => {

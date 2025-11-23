@@ -7,12 +7,13 @@ const { execSync } = require('child_process');
 console.log('Running lint and tests (pre-push) using shell execSync ...');
 
 try {
-  // Run lint first but do NOT abort the push on lint failures (show errors only).
+  // Run lint first and abort the push on lint failures.
   try {
     execSync('npm run lint', { stdio: 'inherit', shell: true });
     console.log('Lint passed.');
   } catch (lintErr) {
-    console.warn('Lint finished with errors (push will continue, but consider fixing):', lintErr && lintErr.status);
+    console.error('Lint failed — aborting push.');
+    process.exit(lintErr && lintErr.status ? lintErr.status : 1);
   }
 
   // Now run tests and abort if they fail.

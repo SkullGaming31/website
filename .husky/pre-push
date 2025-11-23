@@ -1,6 +1,11 @@
 #!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
+# Husky v10 compatibility: removed sourcing of internal husky loader lines
+# and rely on a simple pre-push script invocation to reduce failures in
+# constrained environments (Windows spawn EINVAL issues). If you run
+# Husky v10+, ensure hooks are reinitialized via `husky install`.
 
-# Run tests on push and abort if they fail (use Node runner for cross-platform reliability)
 echo "Running tests before push via Node runner..."
-node ./scripts/prepush.js
+node ./scripts/prepush.js || {
+	echo "pre-push tests failed or could not run; aborting push." >&2
+	exit 1
+}

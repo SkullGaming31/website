@@ -1,5 +1,6 @@
 import { render } from '@testing-library/react';
 import GameHeroBackground from '../app/components/GameHeroBackground';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect } from 'vitest';
 
 describe('GameHeroBackground', () => {

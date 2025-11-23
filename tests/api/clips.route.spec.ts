@@ -1,4 +1,5 @@
 /** @vitest-environment node */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 // We'll dynamically import the route module inside each test to ensure module-level caches are reset.
 

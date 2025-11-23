@@ -1,5 +1,4 @@
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
-import { act } from 'react';
 import VodsSection from '../app/components/VodsSection';
 import { vi, describe, it, expect, afterEach } from 'vitest';
 import { server } from '../test/fetchMock';

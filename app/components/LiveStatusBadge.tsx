@@ -14,7 +14,7 @@ export default function LiveStatusBadge() {
         const j = await res.json();
         if (!mounted) return;
         setLive(!!j.live);
-      } catch (e) {
+      } catch {
         if (!mounted) return;
         setLive(false);
       }

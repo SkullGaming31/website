@@ -21,7 +21,7 @@ export default function LiveBanner() {
         const j = await res.json();
         if (!mounted) return;
         setStatus({ live: !!j.live, title: j.title, viewer_count: j.viewer_count, game_name: j.game_name });
-      } catch (e) {
+      } catch {
         // fail silently
       }
     }

@@ -14,7 +14,7 @@ export default function HomeLiveBackground({ children }: { children: React.React
         const j = await res.json();
         if (!mounted) return;
         setOnline(!!j.live);
-      } catch (e) {
+      } catch {
         // on error treat as offline
         if (!mounted) return;
         setOnline(false);

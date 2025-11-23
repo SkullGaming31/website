@@ -30,7 +30,7 @@ export default function GamePlaytime({
         }
         const j = await r.json();
         if (cancelled) return;
-        const entry = appid === 244850 ? j.spaceEngineers : appid === 230410 ? j.warframe : null;
+        const entry = appid === 244850 ? j.spaceEngineers : appid === 251570 ? j.sevenDays : appid === 230410 ? j.warframe : null;
         if (entry) {
           setHours(typeof entry.hours === 'number' ? entry.hours : null);
           setHours2(typeof entry.hours_2weeks === 'number' ? entry.hours_2weeks : null);

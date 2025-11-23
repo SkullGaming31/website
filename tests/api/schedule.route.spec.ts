@@ -1,4 +1,5 @@
 /** @vitest-environment node */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 
 // Helper to build a mock Response-like object

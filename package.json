@@ -10,7 +10,7 @@
     "test:coverage": "vitest run --coverage",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint --fix"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",

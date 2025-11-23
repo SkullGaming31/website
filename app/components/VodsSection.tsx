@@ -31,7 +31,7 @@ type TwitchVideo = {
 export default function VodsSection({ limit, debounceMs = 250 }: { limit?: number, debounceMs?: number }) {
   // sample schedule-derived games (mirrors ScheduleSection overview games)
   const games = [
-    "Space Engineers",
+    "7 Days to Die",
     "Minecraft",
     "GTA V",
     "Rust",

@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { vi, describe, it } from 'vitest';
 
 // Mock next/font/google used in layout to avoid runtime errors in test environment

@@ -12,7 +12,7 @@ type Playtime = {
 } | null;
 
 export default function SteamPlaytime({ steamid }: { steamid?: string }) {
-  const [data, setData] = useState<null | { spaceEngineers: Playtime; warframe: Playtime }>(null);
+  const [data, setData] = useState<null | { spaceEngineers: Playtime; sevenDays?: Playtime; warframe: Playtime }>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

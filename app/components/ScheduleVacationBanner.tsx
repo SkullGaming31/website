@@ -17,7 +17,7 @@ export default function ScheduleVacationBanner() {
         if (!mounted) return;
         if (j.vacation) setVacation(j.vacation);
         else setVacation(null);
-      } catch (e) {
+      } catch {
         if (!mounted) return;
         setVacation(null);
       }

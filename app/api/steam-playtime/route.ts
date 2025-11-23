@@ -38,11 +38,22 @@ export async function GET(request: Request) {
     const games: SteamGame[] = json?.response?.games || [];
     const byApp = new Map<number, SteamGame>(games.map((g) => [g.appid, g]));
 
+    const sd = byApp.get(251570) || null; // 7 Days to Die
     const se = byApp.get(244850) || null; // Space Engineers
     const wf = byApp.get(230410) || null; // Warframe
 
     return NextResponse.json(
       {
+        sevenDays: sd
+          ? {
+              appid: sd.appid,
+              name: sd.name,
+              minutes: sd.playtime_forever ?? null,
+              hours: minutesToHours(sd.playtime_forever ?? null),
+              minutes_2weeks: sd.playtime_2weeks ?? null,
+              hours_2weeks: minutesToHours(sd.playtime_2weeks ?? null),
+            }
+          : null,
         spaceEngineers: se
           ? {
               appid: se.appid,

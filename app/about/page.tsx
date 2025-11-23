@@ -41,8 +41,8 @@ export default function AboutPage() {
           <div className="flex justify-center">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="bg-zinc-800 rounded-md p-4 text-center">
-              <div className="text-xl font-semibold text-white">GTA RP</div>
-              <div className="text-sm text-purple-200 mt-2">Hours played: 8</div>
+              <div className="text-xl font-semibold text-white">7 Days to Die</div>
+              <GamePlaytime steamid={steamid || undefined} appid={251570} />
             </div>
 
             <div className="bg-zinc-800 rounded-md p-4 text-center">

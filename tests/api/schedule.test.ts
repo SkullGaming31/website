@@ -1,4 +1,5 @@
 /** @vitest-environment node */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect } from 'vitest';
 import * as scheduleRoute from '../../app/api/twitch/schedule/route';
 

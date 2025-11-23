@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import { render, screen, within } from '@testing-library/react';
 import { vi, describe, it } from 'vitest';
@@ -18,7 +19,8 @@ describe('About page', () => {
     expect(screen.getByText(/About Skull/i)).toBeInTheDocument();
     // Main Games section
     expect(screen.getByText(/Main Games/i)).toBeInTheDocument();
-    // Ensure the two dynamic GamePlaytime components are rendered for Warframe and Space Engineers
+    // Ensure the three dynamic GamePlaytime components are rendered for 7 Days to Die, Warframe, and Space Engineers
+    expect(screen.getByTestId('game-playtime-251570')).toBeInTheDocument();
     expect(screen.getByTestId('game-playtime-230410')).toBeInTheDocument();
     expect(screen.getByTestId('game-playtime-244850')).toBeInTheDocument();
 

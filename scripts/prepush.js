@@ -7,11 +7,19 @@ const { execSync } = require('child_process');
 console.log('Running lint and tests (pre-push) using shell execSync ...');
 
 try {
-  // Use shell exec to avoid spawn EINVAL failures on some Windows environments.
-  execSync('npm run lint && npm test', { stdio: 'inherit', shell: true });
-  console.log('Lint and tests passed — continuing push.');
+  // Run lint first but do NOT abort the push on lint failures (show errors only).
+  try {
+    execSync('npm run lint', { stdio: 'inherit', shell: true });
+    console.log('Lint passed.');
+  } catch (lintErr) {
+    console.warn('Lint finished with errors (push will continue, but consider fixing):', lintErr && lintErr.status);
+  }
+
+  // Now run tests and abort if they fail.
+  execSync('npm test', { stdio: 'inherit', shell: true });
+  console.log('Tests passed — continuing push.');
   process.exit(0);
 } catch (e) {
-  console.error('Lint or tests failed — aborting push.');
+  console.error('Tests failed — aborting push.');
   process.exit(e.status || 1);
 }

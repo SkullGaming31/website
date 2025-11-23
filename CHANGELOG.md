@@ -21,20 +21,24 @@
   - Created lightweight in-repo fetch mock and various component tests previously (see `tests/`), and added `.gitattributes` to normalize LF endings.
 
 Security notes
+
 - Do NOT commit secrets. Add your Steam API key locally in `.env.local` as `STEAM_API_KEY` (or `STEAM_API_KEY_DEV` / `STEAM_API_KEY_PROD` if you prefer environment-specific names). The API route reads from env and keeps the key server-side.
 
 How to test locally
+
 - Add `.env.local` with `STEAM_API_KEY=YOUR_KEY` and (optionally) `STEAM_PROFILE_ID=76561198153222775`.
 - Run dev server: `npm run dev` and open `/about` to view live playtime.
 
 If you want different behavior (on-page SteamID input, remove the About page SteamID, or swap minute/hour display), tell me and I can adjust it.
-# CHANGELOG
+
+## CHANGELOG
 
 All notable changes to this repository are documented in this file. This changelog was generated on 2025-11-01 and summarizes the edits and test work completed during the recent migration and improvements session.
 
 ## [Unreleased] - 2025-11-01
 
 ### Added
+
 - Vitest testing setup and tests
   - `vitest.config.ts` and `test/setup.ts` configured for jsdom/node environments.
   - Tests added under `tests/` for components and API routes (clips, schedule, stream).
@@ -51,6 +55,7 @@ All notable changes to this repository are documented in this file. This changel
   - `app/components/GameHeroBackground.tsx` (client background component).
 
 ### Changed
+
 - Type-safety and runtime parsing for Twitch Helix server routes
   - `app/api/twitch/clips/route.ts` — replaced `any` with typed interfaces (TwitchClip, ClipsPayload), added token caching and safe parsing guards.
   - `app/api/twitch/schedule/route.ts` — added SchedulePayload types, robust parsing of Helix schedule responses, token caching, and in-memory schedule cache.
@@ -66,10 +71,30 @@ All notable changes to this repository are documented in this file. This changel
   - `package.json` scripts updated: `test`, `test:watch`, `test:coverage`.
   - Coverage configured (v8 provider) and run; coverage reports saved (text and lcov).
 
+## 2025-11-22 — Playtime API, tests & coverage
+
+- Steam playtime API and UI adjustments:
+  - `app/api/steam-playtime/route.ts` now returns playtime for `sevenDays` (7 Days to Die, appid `251570`), `spaceEngineers` (Space Engineers, appid `244850`) and `warframe` (Warframe, appid `230410`). The endpoint keeps Steam API key server-side and converts minutes to hours for client display.
+  - Client components updated to map appids correctly:
+    - `app/components/SteamPlaytime.tsx` — restored to display Space Engineers by default while `sevenDays` is available in the API payload.
+    - `app/components/GamePlaytime.tsx` — supports appids `251570`, `244850`, and `230410` for About page cards.
+
+- Tests & reliability improvements:
+  - Added and adjusted many tests under `tests/` (Steam playtime unit tests, server route specs, RAF and smoke tests) and added a central in-repo fetch mock for deterministic test behavior.
+  - Fixed flaky tests by mocking fonts, exposing `debounceMs` where needed, and stubbing `requestAnimationFrame`/`cancelAnimationFrame` in tests.
+
+- Coverage run (v8):
+  - Overall coverage: Statements 88.86% | Branches 69.10% | Functions 93.25% | Lines 92.03%.
+  - Notable targets to raise further: `DiscordDashboard.tsx` (0% — needs tests) and a small remaining branch in `GameHeroBackground.tsx` (prefers-reduced-motion).
+
+If you'd like different defaults (e.g., show 7 Days to Die by default in the UI), I can switch the displayed game and update tests accordingly.
+
 ### Removed / Deprecated
+
 - Removed deprecated iframe attributes from Twitch embed usage.
 
 ### Notes & Environment
+
 - Required environment variables for Twitch API routes:
   - `TWITCH_CLIENT_ID`
   - `TWITCH_CLIENT_SECRET`
@@ -77,10 +102,12 @@ All notable changes to this repository are documented in this file. This changel
 - Local git push is pending because committing requires a configured git user.name and user.email. I will not modify your git identity without your explicit confirmation. See next steps for options.
 
 ### Tests & Coverage
+
 - Tests: multiple suites added and run. All tests pass locally (14 tests across 9 files as of 2025-11-01).
 - Coverage: improved after adding schedule/stream tests but global thresholds are not yet met; uncovered areas include many UI components and page-level code under `app/`.
 
 ## Next recommended actions
+
 1. Add focused component tests for untested components (ScheduleSection, Header, Layout, and several pages) to raise line/function/branch coverage.
 2. Add a CI (GitHub Actions) workflow to run tests and coverage on push/PR.
 3. Decide on git commit author identity and allow committing/pushing the current changes.
@@ -101,4 +128,4 @@ Generated automatically by developer tooling on 2025-11-01.
 
 - Test run results (local): full suite passed after changes — `29 files, 55 tests` (Vitest run on 2025-11-19).
 
-If you'd like, I can now push these test files and the updated changelog to `origin/main` (I will run Husky hooks; if your environment's pre-push hook errors, I can push with `--no-verify` on your command). 
+If you'd like, I can now push these test files and the updated changelog to `origin/main` (I will run Husky hooks; if your environment's pre-push hook errors, I can push with `--no-verify` on your command).

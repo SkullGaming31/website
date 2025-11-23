@@ -111,6 +111,10 @@ If you'd like different defaults (e.g., show 7 Days to Die by default in the UI)
 - Linting configuration updated to ignore the `tests/` folder so test files may use `any` and test-specific patterns without causing push-blocking lint failures. See `.eslintignore` added at repository root.
 - This change was made to avoid stricter lint rules (for example `@typescript-eslint/no-explicit-any`) from failing pre-push lint checks while preserving linting for the application code.
 
+### Tests
+
+- Added `tests/GameHeroBackground.prefersReduced.test.tsx` to cover the `prefers-reduced-motion` branch and avoid scheduling RAF-based animation in tests.
+
 ## Next recommended actions
 
 1. Add focused component tests for untested components (ScheduleSection, Header, Layout, and several pages) to raise line/function/branch coverage.

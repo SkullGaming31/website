@@ -3,17 +3,17 @@ import LiveStatusBadge from "./LiveStatusBadge";
 
 export default function Header() {
   return (
-  <header className="w-full text-white">
+    <header className="w-full text-white">
       <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center">
               <span className="text-white font-bold">💀</span>
             </div>
-            <span className="font-semibold">SkullGamingHQ</span>
+            <span className="font-semibold">canadiendragon</span>
           </div>
 
-            <nav className="hidden md:flex gap-6 ml-8 text-sm">
+          <nav className="hidden md:flex gap-6 ml-8 text-sm">
             <Link href="/" className="hover:underline">Home</Link>
             <Link href="/schedule" className="hover:underline">Schedule</Link>
             <Link href="/videos" className="hover:underline">Videos</Link>
@@ -23,35 +23,35 @@ export default function Header() {
 
         <div className="flex items-center gap-4 text-sm">
           <LiveStatusBadge />
-          <a href="https://twitter.com/SkullGamingHQ" aria-label="twitter" className="opacity-80 hover:opacity-100" target="_blank" rel="noopener noreferrer">
+          <a href="https://twitter.com/canadiendragon1" aria-label="twitter" className="opacity-80 hover:opacity-100" target="_blank" rel="noopener noreferrer">
             {/* Twitter */}
             <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M22.46 6c-.77.35-1.6.58-2.46.69a4.26 4.26 0 0 0 1.88-2.36 8.53 8.53 0 0 1-2.7 1.03 4.25 4.25 0 0 0-7.24 3.88A12.06 12.06 0 0 1 3.15 4.6a4.24 4.24 0 0 0 1.32 5.67 4.2 4.2 0 0 1-1.92-.53v.05a4.25 4.25 0 0 0 3.41 4.17 4.27 4.27 0 0 1-1.91.07 4.25 4.25 0 0 0 3.97 2.95A8.53 8.53 0 0 1 2 19.54 12.03 12.03 0 0 0 8.29 21c7.55 0 11.68-6.26 11.68-11.69 0-.18-.01-.36-.02-.54A8.36 8.36 0 0 0 22.46 6z" />
             </svg>
           </a>
 
-          <a href="https://www.youtube.com/@canadiendragon1" aria-label="youtube" className="opacity-80 hover:opacity-100" target="_blank" rel="noopener noreferrer">
+          <a href="https://www.youtube.com/@canadiendragonyt" aria-label="youtube" className="opacity-80 hover:opacity-100" target="_blank" rel="noopener noreferrer">
             {/* YouTube */}
             <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M23.5 6.2s-.2-1.7-.8-2.4c-.8-.9-1.7-.9-2.1-1C16.6 2.5 12 2.5 12 2.5h-.1s-4.6 0-8.6.3c-.5 0-1.4.1-2.1 1C.7 4.6.5 6.2.5 6.2S.2 8.4.2 10.6v2.8c0 2.2.3 4.4.3 4.4s.2 1.7.8 2.4c.8.9 1.9.9 2.4 1 1.8.2 7.6.3 7.6.3s4.6 0 8.6-.3c.5 0 1.4-.1 2.1-1 .6-.7.8-2.4.8-2.4s.3-2.2.3-4.4v-2.8c0-2.2-.3-4.4-.3-4.4zM9.8 15.6V8.4l6.5 3.6-6.5 3.6z" />
             </svg>
           </a>
 
-          <a href="https://www.twitch.tv/skullgaminghq" aria-label="twitch" className="opacity-80 hover:opacity-100" target="_blank" rel="noopener noreferrer">
+          <a href="https://www.twitch.tv/canadiendragon" aria-label="twitch" className="opacity-80 hover:opacity-100" target="_blank" rel="noopener noreferrer">
             {/* Twitch */}
             <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M4 3v13.5h3V21l3-3h4.5L20 14V3H4zm15 11.5l-2 1.5H9l-2 2v-2H5V4h14v10.5zM14 7h2v4h-2V7zm-4 0h2v4H10V7z" />
             </svg>
           </a>
 
-          <a href="https://www.instagram.com/skullgaminghq1" aria-label="instagram" className="opacity-80 hover:opacity-100" target="_blank" rel="noopener noreferrer">
+          <a href="https://www.instagram.com/canadiendragonig" aria-label="instagram" className="opacity-80 hover:opacity-100" target="_blank" rel="noopener noreferrer">
             {/* Instagram */}
             <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm8 4.5a1 1 0 1 0 0 2 1 1 0 0 0 0-2zM12 8a4 4 0 1 0 .001 8.001A4 4 0 0 0 12 8zm0 2a2 2 0 1 1 0 4 2 2 0 0 1 0-4z" />
             </svg>
           </a>
 
-          <a href="https://discord.com/invite/6TGV75sDjW" aria-label="discord" className="opacity-80 hover:opacity-100" target="_blank" rel="noopener noreferrer">
+          <a href="https://discord.com/invite/UhQuaASkKR" aria-label="discord" className="opacity-80 hover:opacity-100" target="_blank" rel="noopener noreferrer">
             {/* Discord */}
             <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M20.317 4.3698A19.7913 19.7913 0 0016.136 3c-.227.39-.48.9-.656 1.29-1.943-.29-3.89-.29-5.778 0-.176-.39-.43-.9-.656-1.29A19.7363 19.7363 0 003.6832 4.37C2.124 8.027 1.554 11.58 1.868 15.09 5.186 17.27 8.39 18.3 11.64 18.98c.62-.85 1.1-1.75 1.43-2.7-2.86-.47-5.02-1.34-6.92-2.5.47-.35.94-.73 1.39-1.13 2.27 1.26 5.3 2 8.8 2.07 3.5-.07 6.53-.82 8.8-2.07.45.4.92.78 1.39 1.13-1.9 1.16-4.06 2.03-6.92 2.5.33.95.81 1.85 1.43 2.7 3.25-.68 6.448-1.71 9.766-3.89.314-3.512-.196-7.065-1.755-10.72zM8.02 11.33c-.88 0-1.6-.8-1.6-1.77 0-.98.72-1.78 1.6-1.78.89 0 1.61.8 1.61 1.78 0 .97-.72 1.77-1.61 1.77zm7.96 0c-.88 0-1.6-.8-1.6-1.77 0-.98.72-1.78 1.6-1.78.89 0 1.61.8 1.61 1.78 0 .97-.72 1.77-1.61 1.77z" />

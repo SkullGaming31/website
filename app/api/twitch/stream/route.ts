@@ -34,7 +34,7 @@ type StreamPayload = {
 let tokenCache: { token?: string; expiresAt?: number } = {};
 let streamCache: { data?: StreamPayload; fetchedAt?: number } = {};
 
-const CHANNEL = "skullgaminghq"; // change if needed
+const CHANNEL = "canadiendragon"; // change if needed
 const TOKEN_TTL_BUFFER = 30; // seconds buffer
 const STREAM_TTL = 30; // cache stream response for 30s
 
@@ -106,11 +106,11 @@ export async function GET() {
       channel: CHANNEL,
       ...(live && first
         ? {
-            title: first.title as string | undefined,
-            viewer_count: first.viewer_count as number | undefined,
-            started_at: first.started_at as string | undefined,
-            game_name: first.game_name as string | undefined,
-          }
+          title: first.title as string | undefined,
+          viewer_count: first.viewer_count as number | undefined,
+          started_at: first.started_at as string | undefined,
+          game_name: first.game_name as string | undefined,
+        }
         : {}),
       cachedAt: new Date().toISOString(),
     };

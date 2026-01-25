@@ -39,7 +39,7 @@ export default function VodsSection({ limit, debounceMs = 250 }: { limit?: numbe
   ];
 
   const sampleVods = [
-    { id: '1', title: "Epic Valorant Clutch", url: "#", game: "Valorant", type: "highlights", creator: "SkullGamingHQ", view: 1345 },
+    { id: '1', title: "Epic Valorant Clutch", url: "#", game: "Valorant", type: "highlights", creator: "CanadienDragon", view: 1345 },
     { id: '2', title: "Apex Ranked Sweat", url: "#", game: "Apex Legends", type: "vods", creator: "CanadienDragon", view: 842 },
     { id: '3', title: "Call of Duty Snipes", url: "#", game: "Call of Duty", type: "clips", creator: "GuestClipper", view: 210 },
     { id: '4', title: "Cyberpunk Highlights", url: "#", game: "Cyberpunk 2077", type: "highlights", creator: "NightRider", view: 412 },
@@ -189,15 +189,15 @@ export default function VodsSection({ limit, debounceMs = 250 }: { limit?: numbe
           </select>
         </div>
 
-          <div className="flex items-center gap-3">
-            <label className="text-sm text-purple-200">Type</label>
-            <select value={selectedType} onChange={(e) => setSelectedType(e.target.value)} className="bg-zinc-900 text-white px-3 py-2 rounded-md">
-              <option value="all">All types</option>
-              <option value="highlights">Highlights</option>
-              <option value="vods">VODs</option>
-              <option value="clips">Clips</option>
-            </select>
-          </div>
+        <div className="flex items-center gap-3">
+          <label className="text-sm text-purple-200">Type</label>
+          <select value={selectedType} onChange={(e) => setSelectedType(e.target.value)} className="bg-zinc-900 text-white px-3 py-2 rounded-md">
+            <option value="all">All types</option>
+            <option value="highlights">Highlights</option>
+            <option value="vods">VODs</option>
+            <option value="clips">Clips</option>
+          </select>
+        </div>
       </div>
 
       <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

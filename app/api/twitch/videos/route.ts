@@ -26,7 +26,7 @@ type VideosPayload = {
 let tokenCache: { token?: string; expiresAt?: number } = {};
 let videosCache: { data?: VideosPayload; fetchedAt?: number } = {};
 
-const CHANNEL = "skullgaminghq";
+const CHANNEL = "canadiendragon";
 const TOKEN_TTL_BUFFER = 30;
 const VIDEOS_TTL = 45; // seconds
 

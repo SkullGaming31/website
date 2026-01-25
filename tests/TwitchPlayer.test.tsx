@@ -8,12 +8,12 @@ describe('TwitchPlayer', () => {
     const existing = document.getElementById('twitch-embed-script');
     if (existing) existing.remove();
 
-    render(<TwitchPlayer channel="skullgaminghq" parent={["localhost"]} width={640} height={360} />);
+    render(<TwitchPlayer channel="canadiendragon" parent={["localhost"]} width={640} height={360} />);
 
     // iframe should be present with correct src
-    const iframe = screen.getByTitle(/Twitch stream skullgaminghq/i) as HTMLIFrameElement;
+    const iframe = screen.getByTitle(/Twitch stream canadiendragon/i) as HTMLIFrameElement;
     expect(iframe).toBeTruthy();
-    expect(iframe.src).toContain('channel=skullgaminghq');
+    expect(iframe.src).toContain('channel=canadiendragon');
     expect(iframe.src).toContain('parent=localhost');
 
     // use waitFor to allow effect to append script

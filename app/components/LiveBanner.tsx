@@ -36,7 +36,7 @@ export default function LiveBanner() {
 
   if (!status.live) return null;
 
-  const href = "https://twitch.tv/skullgaminghq";
+  const href = "https://twitch.tv/canadiendragon";
 
   return (
     <a href={href} target="_blank" rel="noopener noreferrer" className="w-full block bg-red-600 text-white text-center py-2">

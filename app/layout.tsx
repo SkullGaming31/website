@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SkullGamingHQ — Streams & Content",
-  description: "Official site for SkullGamingHQ — live Twitch streams, schedule, and socials.",
+  title: "canadiendragon — Streams & Content",
+  description: "Official site for canadiendragon — live Twitch streams, schedule, and socials.",
 };
 
 export default function RootLayout({
@@ -27,9 +27,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-  <body className={`${geistSans.variable} ${geistMono.variable} antialiased text-white`}>
-  <Header />
-  <LiveBanner />
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased text-white`}>
+        <Header />
+        <LiveBanner />
 
         <main className="w-full">
           <div className="max-w-6xl mx-auto px-6">
@@ -37,7 +37,7 @@ export default function RootLayout({
           </div>
         </main>
 
-  <Footer />
+        <Footer />
       </body>
     </html>
   );

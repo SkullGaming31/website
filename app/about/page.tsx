@@ -1,9 +1,9 @@
 export const metadata = {
-  title: 'About — SkullGamingHQ',
-  description: 'SkullGamingHQ is a community-driven gaming hub. Learn about our stream schedule, community, and how to join.',
+  title: 'About — CanadienDragon',
+  description: 'CanadienDragon is a community-driven gaming hub. Learn about our stream schedule, community, and how to join.',
   openGraph: {
-    title: 'About — SkullGamingHQ',
-    description: 'SkullGamingHQ is a community-driven gaming hub. Learn about our stream schedule, community, and how to join.',
+    title: 'About — CanadienDragon',
+    description: 'CanadienDragon is a community-driven gaming hub. Learn about our stream schedule, community, and how to join.',
   },
 };
 
@@ -14,13 +14,13 @@ export default function AboutPage() {
   const steamid = "76561198153222775";
 
   return (
-  <div className="min-h-screen">
+    <div className="min-h-screen">
       <main className="w-full max-w-4xl mx-auto py-20 px-6">
         <div className="mb-8 text-center">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
             <div className="md:text-left">
-              <h1 className="text-4xl font-bold text-white">About Skull</h1>
-              <p className="mt-3 text-purple-200 max-w-2xl mx-auto md:mx-0">Welcome to the HQ! I&apos;m a passionate gamer, content creator, and community builder who&apos;s been dominating the digital battlefield for over a decade. From clutch plays to epic fails, I share it all with my amazing community.</p>
+              <h1 className="text-4xl font-bold text-white">About CanadienDragon</h1>
+              <p className="mt-3 text-purple-200 max-w-2xl mx-auto md:mx-0">Welcome to the DragonsDen! I&apos;m a passionate gamer, content creator, and community builder who&apos;s been dominating the digital battlefield for over a decade. From clutch plays to epic fails, I share it all with my amazing community.</p>
               <div className="mt-6 flex justify-center md:justify-start gap-4">
                 {/* <a href="#" className="bg-purple-600 text-white px-5 py-2 rounded-md">Join the Squad</a> */}
                 <a href="#" className="border border-zinc-700 text-purple-100 px-5 py-2 rounded-md">Support Me</a>
@@ -33,29 +33,29 @@ export default function AboutPage() {
           </div>
         </div>
 
-        
+
 
         <section className="bg-zinc-900 rounded-xl p-6 mb-6 text-center">
           <h2 className="text-2xl font-semibold text-white mb-3">Main Games</h2>
           <p className="text-purple-200 mb-4">What you&apos;ll see me playing on stream</p>
           <div className="flex justify-center">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="bg-zinc-800 rounded-md p-4 text-center">
-              <div className="text-xl font-semibold text-white">7 Days to Die</div>
-              <GamePlaytime steamid={steamid || undefined} appid={251570} />
-            </div>
+              <div className="bg-zinc-800 rounded-md p-4 text-center">
+                <div className="text-xl font-semibold text-white">7 Days to Die</div>
+                <GamePlaytime steamid={steamid || undefined} appid={251570} />
+              </div>
 
-            <div className="bg-zinc-800 rounded-md p-4 text-center">
-              <div className="text-xl font-semibold text-white">Warframe</div>
-              <GamePlaytime steamid={steamid || undefined} appid={230410} />
-            </div>
+              <div className="bg-zinc-800 rounded-md p-4 text-center">
+                <div className="text-xl font-semibold text-white">Warframe</div>
+                <GamePlaytime steamid={steamid || undefined} appid={230410} />
+              </div>
 
-            <div className="bg-zinc-800 rounded-md p-4 text-center">
-              <div className="text-xl font-semibold text-white">Space Engineers</div>
-              <GamePlaytime steamid={steamid || undefined} appid={244850} />
+              <div className="bg-zinc-800 rounded-md p-4 text-center">
+                <div className="text-xl font-semibold text-white">Space Engineers</div>
+                <GamePlaytime steamid={steamid || undefined} appid={244850} />
+              </div>
             </div>
           </div>
-        </div>
         </section>
 
         <div className="mb-2 text-center">
@@ -63,7 +63,7 @@ export default function AboutPage() {
           <p className="text-purple-200">Beyond the gaming setup</p>
         </div>
 
-  <section className="bg-zinc-900 rounded-xl p-6 mb-6 space-y-4 text-center">
+        <section className="bg-zinc-900 rounded-xl p-6 mb-6 space-y-4 text-center">
           <p className="text-purple-200">I enjoy gaming with friends, I&apos;m a hobby programmer currently creating a Twitch<a href="https://github.com/skullgaming31/opendevbot">(OpenDevBot)</a> and Discord<a href="https://github.com/skullgaming31/opendevbot">(DragonBot)</a>bot along with this website with the help of AI (GitHub Copilot)</p>
         </section>
 
@@ -91,7 +91,7 @@ export default function AboutPage() {
             </details>
 
             <details className="bg-zinc-800 rounded-md p-4">
-              <summary className="cursor-pointer font-medium">Can I sponsor or partner with SkullGamingHQ?</summary>
+              <summary className="cursor-pointer font-medium">Can I sponsor or partner with CanadienDragon?</summary>
               <p className="mt-2 text-sm">Yes — for sponsorship inquiries, email <a href="mailto:skullgamingg31@gmail.com" className="underline">skullgamingg31@gmail.com</a> with details about your proposal.</p>
             </details>
 
@@ -127,7 +127,7 @@ export default function AboutPage() {
                 },
                 {
                   "@type": "Question",
-                  "name": "Can I sponsor or partner with SkullGamingHQ?",
+                  "name": "Can I sponsor or partner with CanadienDragon?",
                   "acceptedAnswer": { "@type": "Answer", "text": "Yes — for sponsorship inquiries, email skullgamingg31@gmail.com with details about your proposal." }
                 },
                 {

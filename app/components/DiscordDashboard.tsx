@@ -6,7 +6,7 @@ export default function DiscordDashboard() {
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="text-2xl font-bold text-white">Discord Dashboard</h3>
-              <p className="text-sm text-purple-200">Manage your SkullGamingHQ Discord server.</p>
+              <p className="text-sm text-purple-200">Manage your canadiendragon Discord server.</p>
             </div>
             <div className="text-sm text-purple-300">Live</div>
           </div>

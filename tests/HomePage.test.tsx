@@ -23,7 +23,7 @@ describe('Home page', () => {
     expect(screen.getByText(/The HQ/i)).toBeInTheDocument();
 
     // mocked Twitch player should render with the channel name
-    expect(screen.getByTestId('twitch-player')).toHaveTextContent('TwitchPlayer:skullgaminghq');
+    expect(screen.getByTestId('twitch-player')).toHaveTextContent('TwitchPlayer:canadiendragon');
 
     // mocked Vods and Schedule sections
     expect(screen.getByTestId('vods-section')).toBeInTheDocument();

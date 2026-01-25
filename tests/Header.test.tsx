@@ -10,13 +10,13 @@ describe('Header', () => {
   });
 
   it('renders brand and navigation links and shows live status', async () => {
-  // override stream handler to return live
-  server.use(server.respondWith('/api/twitch/stream', 200, { live: true }));
+    // override stream handler to return live
+    server.use(server.respondWith('/api/twitch/stream', 200, { live: true }));
 
     render(<Header />);
 
     // Brand text
-    expect(screen.getByText(/SkullGamingHQ/i)).toBeTruthy();
+    expect(screen.getByText(/CanadienDragon/i)).toBeTruthy();
 
     // Nav links
     expect(screen.getByText(/Schedule/i)).toBeTruthy();

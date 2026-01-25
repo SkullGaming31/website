@@ -38,7 +38,7 @@ export default function TwitchPlayer({
 
   // Always include the runtime host when available. In non-dev environments, ensure the
   // known production/vercel host is included so Twitch will accept the embeddable parent.
-  const PROD_PARENT = "website-kappa-ecru-75.vercel.app";
+  const PROD_PARENT = "canadiendragon.live";
 
   let parents = Array.from(new Set([...providedParents, runtimeHost].filter(Boolean)));
 
@@ -48,12 +48,19 @@ export default function TwitchPlayer({
     // Ensure the production hostname is present so embeds on Vercel will be allowed
     if (!parents.includes(PROD_PARENT)) parents.push(PROD_PARENT);
   } else {
-    // In dev, keep localhost and runtimeHost as-is
-    parents = parents;
+    // In dev, ensure common local hostnames are present for Twitch to allow framing
+    if (!parents.includes("localhost")) parents.push("localhost");
+    if (!parents.includes("127.0.0.1")) parents.push("127.0.0.1");
   }
 
   const dataParentAttr = parents.join(",");
   const parentQuery = parents.map((p) => `parent=${encodeURIComponent(p)}`).join("&");
+
+  if (typeof window !== "undefined") {
+    const iframeSrc = `https://player.twitch.tv/?channel=${encodeURIComponent(channel)}${parentQuery ? `&${parentQuery}` : ""}&muted=false&autoplay=false`;
+    // Helpful debug output when testing locally — remove in production
+    console.debug("TwitchPlayer parents:", parents, "iframeSrc:", iframeSrc);
+  }
 
   return (
     <div
@@ -66,9 +73,8 @@ export default function TwitchPlayer({
       {/* Fallback iframe for environments where the embed script didn't run yet */}
       <iframe
         title={`Twitch stream ${channel}`}
-        src={`https://player.twitch.tv/?channel=${encodeURIComponent(channel)}${
-          parentQuery ? `&${parentQuery}` : ""
-        }&muted=false&autoplay=false`}
+        src={`https://player.twitch.tv/?channel=${encodeURIComponent(channel)}${parentQuery ? `&${parentQuery}` : ""
+          }&muted=false&autoplay=false`}
         allowFullScreen
         style={{ border: 0 }}
         width={typeof width === "number" ? width : "100%"}

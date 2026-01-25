@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { vi, describe, it } from 'vitest';
+import { vi, describe, it, expect } from 'vitest';
 
 // Mock next/font/google used in layout to avoid runtime errors in test environment
 vi.mock('next/font/google', () => ({
@@ -23,13 +23,13 @@ describe('RootLayout', () => {
     // header brand — find within the header region to avoid matching footer
     const header = screen.getByRole('banner');
     expect(header).toBeInTheDocument();
-    expect(header).toHaveTextContent(/SkullGamingHQ/i);
+    expect(header).toHaveTextContent(/CanadienDragon/i);
     // child content
     expect(screen.getByText('Child content')).toBeInTheDocument();
     // footer copyright (year may vary) — assert presence of the site name in footer
     const footer = screen.getByRole('contentinfo');
     expect(footer).toBeInTheDocument();
-    expect(footer).toHaveTextContent(/SkullGamingHQ — All rights reserved\./i);
+    expect(footer).toHaveTextContent(/CanadienDragon — All rights reserved\./i);
   });
 
   it('shows LiveBanner when stream API reports live', async () => {

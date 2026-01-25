@@ -30,7 +30,7 @@ type ClipsPayload = {
 let tokenCache: { token?: string; expiresAt?: number } = {};
 let clipsCache: { data?: ClipsPayload; fetchedAt?: number } = {};
 
-const CHANNEL = "skullgaminghq";
+const CHANNEL = "canadiendragon";
 const TOKEN_TTL_BUFFER = 30; // seconds
 const CLIPS_TTL = 30; // seconds
 

@@ -35,7 +35,8 @@ export default function VodsSection({ limit, debounceMs = 250 }: { limit?: numbe
     "Minecraft",
     "GTA V",
     "Rust",
-    "Vigor"
+    "Vigor",
+    "Arc Raiders"
   ];
 
   const sampleVods = [

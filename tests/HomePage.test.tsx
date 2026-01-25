@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { vi, describe, it } from 'vitest';
+import { vi, describe, it, expect } from 'vitest';
 
 // Mock components used by the page to keep test focused and deterministic
 vi.mock('next/font/google', () => ({ Geist: () => ({ variable: '--font-geist-sans' }), Geist_Mono: () => ({ variable: '--font-geist-mono' }) }));
@@ -20,7 +20,7 @@ describe('Home page', () => {
     render(<Home />);
 
     expect(screen.getByText(/Welcome to/i)).toBeInTheDocument();
-    expect(screen.getByText(/The HQ/i)).toBeInTheDocument();
+    expect(screen.getByText(/The DragonDen/i)).toBeInTheDocument();
 
     // mocked Twitch player should render with the channel name
     expect(screen.getByTestId('twitch-player')).toHaveTextContent('TwitchPlayer:canadiendragon');

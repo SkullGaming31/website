@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import { render, screen, within } from '@testing-library/react';
-import { vi, describe, it } from 'vitest';
+import { vi, describe, it, expect } from 'vitest';
 
 // Mock the GamePlaytime client component so tests are deterministic
 vi.mock('../app/components/GamePlaytime', () => ({
@@ -16,7 +16,7 @@ describe('About page', () => {
   it('renders main headings, game cards and contact info', () => {
     render(<AboutPage />);
 
-    expect(screen.getByText(/About Skull/i)).toBeInTheDocument();
+    expect(screen.getByText(/About CanadienDragon/i)).toBeInTheDocument();
     // Main Games section
     expect(screen.getByText(/Main Games/i)).toBeInTheDocument();
     // Ensure the three dynamic GamePlaytime components are rendered for 7 Days to Die, Warframe, and Space Engineers

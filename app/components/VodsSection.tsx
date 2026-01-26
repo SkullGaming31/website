@@ -52,15 +52,11 @@ const GAME_KEYWORDS = [
   "Arc Raiders",
   "Rust",
   "Minecraft",
-  "GTA V",
-  "Valorant",
+  "Grand Thieft Auto V",
   "Warframe",
   "Fortnite",
-  "League of Legends",
   "Apex Legends",
-  "Call of Duty",
-  "Among Us",
-  "Rocket League",
+  "Among Us"
 ];
 
 function inferGameFromText(text?: string): string | undefined {

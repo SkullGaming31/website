@@ -75,6 +75,15 @@ function inferGameFromText(text?: string): string | undefined {
   return undefined;
 }
 
+function formatViews(n?: number): string | undefined {
+  if (n == null) return undefined;
+  try {
+    return n.toLocaleString("en-US") + " views";
+  } catch {
+    return String(n) + " views";
+  }
+}
+
 // Clip type (frontend subset of server's TwitchClip)
 type TwitchClip = {
   id: string;
@@ -199,9 +208,8 @@ export default function VodsSection({ limit, debounceMs = 250 }: { limit?: numbe
     id: c.id,
     title: (c.title as string) || "Untitled",
     url: (c.url as string) || "#",
-    // Prefer `game_name` when available (resolved server-side), fall back to inferred game or game_id
-    game:
-      ((c).game_name as string) || inferGameFromText((c.title as string) || "") || ((c.game_id as string) || "Unknown"),
+    // If view_count present for clips, show formatted views in the 'game' position
+    game: (c.view_count ? formatViews(c.view_count as number) : (((c).game_name as string) || inferGameFromText((c.title as string) || "") || ((c.game_id as string) || "Unknown"))),
     // Note: only clips payloads include `creator_name` in Twitch's API — use it when present
     creator: (c.creator_name as string) || "Unknown",
     uploader: (c.broadcaster_name as string) || (c.creator_name as string) || "Unknown",
@@ -217,8 +225,9 @@ export default function VodsSection({ limit, debounceMs = 250 }: { limit?: numbe
       id: v.id,
       title: (v.title as string) || "Untitled",
       url: (v.url as string) || "#",
-      // Prefer `game_name` when available (resolved server-side); fall back to inferred game
-      game: ((v).game_name as string) || inferGameFromText((v.title as string) || "") || "Unknown",
+      // Prefer `game_name` when available; if view_count is present show formatted views,
+      // otherwise if view_count is missing use the video's duration in the 'game' position.
+      game: (v.view_count ? formatViews(v.view_count as number) : (((v).game_name as string) || inferGameFromText((v.title as string) || "") || (v.duration as string) || "Unknown")),
       // Videos from Helix do not include `creator_name`; use the uploader fields instead
       creator: (v.user_name as string) || (v.user_login as string) || "Unknown",
       uploader: (v.user_name as string) || (v.user_login as string) || "Unknown",
@@ -237,7 +246,12 @@ export default function VodsSection({ limit, debounceMs = 250 }: { limit?: numbe
   const games = useMemo(() => {
     const s = new Set<string>();
     sourceItems.forEach((it) => {
-      if (it.game) s.add(it.game);
+      if (!it.game) return;
+      const g = it.game;
+      // exclude ephemeral values used for views/duration (these shouldn't be in the game filter)
+      const isViews = /^\d{1,3}(,\d{3})* views$/i.test(g);
+      const isDuration = /^\d{1,2}:\d{2}(?::\d{2})?$/.test(g);
+      if (!isViews && !isDuration) s.add(g);
     });
     return Array.from(s).sort();
   }, [sourceItems]);

@@ -209,7 +209,7 @@ export default function VodsSection({ limit, debounceMs = 250 }: { limit?: numbe
     title: (c.title as string) || "Untitled",
     url: (c.url as string) || "#",
     // If view_count present for clips, show formatted views in the 'game' position
-    game: (c.view_count ? formatViews(c.view_count as number) : (((c).game_name as string) || inferGameFromText((c.title as string) || "") || ((c.game_id as string) || "Unknown"))),
+    game: (c.view_count ? (formatViews(c.view_count as number) ?? "Unknown") : (((c).game_name as string) || inferGameFromText((c.title as string) || "") || ((c.game_id as string) || "Unknown"))),
     // Note: only clips payloads include `creator_name` in Twitch's API — use it when present
     creator: (c.creator_name as string) || "Unknown",
     uploader: (c.broadcaster_name as string) || (c.creator_name as string) || "Unknown",
@@ -227,7 +227,7 @@ export default function VodsSection({ limit, debounceMs = 250 }: { limit?: numbe
       url: (v.url as string) || "#",
       // Prefer `game_name` when available; if view_count is present show formatted views,
       // otherwise if view_count is missing use the video's duration in the 'game' position.
-      game: (v.view_count ? formatViews(v.view_count as number) : (((v).game_name as string) || inferGameFromText((v.title as string) || "") || (v.duration as string) || "Unknown")),
+      game: (v.view_count ? (formatViews(v.view_count as number) ?? "Unknown") : (((v).game_name as string) || inferGameFromText((v.title as string) || "") || (v.duration as string) || "Unknown")),
       // Videos from Helix do not include `creator_name`; use the uploader fields instead
       creator: (v.user_name as string) || (v.user_login as string) || "Unknown",
       uploader: (v.user_name as string) || (v.user_login as string) || "Unknown",

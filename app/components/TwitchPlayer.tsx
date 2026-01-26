@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 type Props = {
   channel: string;
@@ -15,7 +15,12 @@ export default function TwitchPlayer({
   width = "100%",
   height = 480,
 }: Props) {
+  // Mount state: only render the iframe on the client to avoid SSR hydration mismatches
+  const [mounted, setMounted] = useState(false);
+  const [clientParents, setClientParents] = useState<string[] | null>(null);
+
   useEffect(() => {
+    setMounted(true);
     // Load Twitch embed script once
     if (!document.getElementById("twitch-embed-script")) {
       const s = document.createElement("script");
@@ -50,59 +55,58 @@ export default function TwitchPlayer({
 
   const providedSanitized = providedParents.map(sanitizeParent).filter(Boolean);
 
-  const isDevHost =
-    !isServer &&
-    (runtimeHost === "localhost" || runtimeHost === "127.0.0.1");
+  // Prepare client-side parents on mount to avoid SSR/client mismatches
+  useEffect(() => {
+    if (isServer) return;
 
-  // Always include the runtime host when available. In non-dev environments, ensure the
-  // known production/vercel host is included so Twitch will accept the embeddable parent.
-  const PROD_PARENT = "canadiendragon.live";
+    const PROD_PARENT = "canadiendragon.live";
+    const WWW_PROD = `www.${PROD_PARENT}`;
 
-  let parents = Array.from(new Set([...providedSanitized, runtimeHost].filter(Boolean)));
+    const isDevHost = runtimeHost === "localhost" || runtimeHost === "127.0.0.1" || runtimeHost === "::1";
 
-  // Only add production parents on the client — the server render shouldn't assume
-  // the runtime hostname (that would cause hydration mismatches once the client
-  // renders and computes a different host like 'localhost').
-  if (!isDevHost && !isServer) {
-    // Remove localhost/127 entries if present
-    parents = parents.filter((p) => p !== "localhost" && !p.startsWith("127."));
-    // Ensure the production hostname is present so embeds on Vercel will be allowed
-    if (!parents.includes(PROD_PARENT)) parents.push(PROD_PARENT);
-    // Include the www variant as some visitors use the www host
-    const WWW_PROD = `${PROD_PARENT}`;
-    if (!parents.includes(WWW_PROD)) parents.push(WWW_PROD);
-  } else {
-    // In dev, ensure common local hostnames are present for Twitch to allow framing
-    if (!parents.includes("localhost")) parents.push("localhost");
-    if (!parents.includes("127.0.0.1")) parents.push("127.0.0.1");
-  }
+    const p = Array.from(new Set([...providedSanitized, runtimeHost].filter(Boolean)));
 
-  // Validate final parents list and warn about any invalid entries that were dropped
-  const finalParents = parents.filter((p) => /^[A-Za-z0-9.-]+$/.test(p));
-  const dropped = parents.filter((p) => !finalParents.includes(p));
-  if (dropped.length > 0) {
-    console.warn("TwitchPlayer: dropped invalid parent entries:", dropped);
-  }
-  parents = finalParents;
-
-  const dataParentAttr = parents.join(",");
-  const parentQuery = parents.map((p) => `parent=${encodeURIComponent(p)}`).join("&");
-
-  if (typeof window !== "undefined") {
-    const iframeSrc = `https://player.twitch.tv/?channel=${encodeURIComponent(channel)}${parentQuery ? `&${parentQuery}` : ""}&muted=true&autoplay=false`;
-    // Helpful debug output when testing locally — remove in production
-    console.debug({
-      message: "TwitchPlayer debug",
-      runtimeHost,
-      protocol: window.location.protocol,
-      parents,
-      iframeSrc,
-    });
-    // Warn when not using HTTPS on non-local hosts
-    if (window.location.protocol !== "https:" && !isDevHost) {
-      console.warn("Twitch embeds require HTTPS for non-localhost hosts. The current protocol is:", window.location.protocol);
+    if (isDevHost) {
+      if (!p.includes("localhost")) p.push("localhost");
+      if (!p.includes("127.0.0.1")) p.push("127.0.0.1");
+      if (!p.includes("::1")) p.push("::1");
     }
+
+    // Always include the production hostnames on the client so embeds work on prod
+    if (!p.includes(PROD_PARENT)) p.push(PROD_PARENT);
+    if (!p.includes(WWW_PROD)) p.push(WWW_PROD);
+
+    // Validate final parents list and warn about any invalid entries that were dropped
+    const finalParents = p.filter((x) => /^[A-Za-z0-9.-]+$/.test(x));
+    const dropped = p.filter((x) => !finalParents.includes(x));
+    if (dropped.length > 0) console.warn("TwitchPlayer: dropped invalid parent entries:", dropped);
+
+    setClientParents(finalParents);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [runtimeHost, parent]);
+
+  // If not mounted or clientParents not ready, render a placeholder to avoid SSR mismatch
+  if (!mounted || !clientParents) {
+    return (
+      <div id="twitch-embed" className="w-full bg-black" style={{ width: typeof width === "number" ? `${width}px` : width, height }} data-channel={channel} data-parent="">
+        {/* Placeholder while client computes parents and loads the player */}
+      </div>
+    );
   }
+
+  const dataParentAttr = clientParents.join(",");
+  const parentQuery = clientParents.map((p) => `parent=${encodeURIComponent(p)}`).join("&");
+
+  const iframeSrc = `https://player.twitch.tv/?channel=${encodeURIComponent(channel)}${parentQuery ? `&${parentQuery}` : ""}&muted=false&autoplay=false`;
+
+  // Helpful debug output when testing locally — remove in production
+  console.debug({
+    message: "TwitchPlayer debug",
+    runtimeHost,
+    protocol: typeof window !== "undefined" ? window.location.protocol : undefined,
+    parents: clientParents,
+    iframeSrc,
+  });
 
   return (
     <div
@@ -112,11 +116,9 @@ export default function TwitchPlayer({
       data-channel={channel}
       data-parent={dataParentAttr}
     >
-      {/* Fallback iframe for environments where the embed script didn't run yet */}
       <iframe
         title={`Twitch stream ${channel}`}
-        src={`https://player.twitch.tv/?channel=${encodeURIComponent(channel)}${parentQuery ? `&${parentQuery}` : ""
-          }&muted=false&autoplay=false`}
+        src={iframeSrc}
         allowFullScreen
         style={{ border: 0 }}
         width={typeof width === "number" ? width : "100%"}

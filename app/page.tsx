@@ -42,7 +42,7 @@ export default function Home() {
             <div className="col-span-6">
               <div className="rounded-xl p-1" style={{ background: "linear-gradient(90deg,#7c3aed,#a78bfa)" }}>
                 <div className="rounded-lg overflow-hidden" style={{ boxShadow: "0 30px 40px rgba(124,58,237,0.25)" }}>
-                  <TwitchPlayer channel={channel} parent={typeof window !== "undefined" ? window.location.hostname : "localhost"} />
+                  <TwitchPlayer channel={channel} />
                 </div>
               </div>
             </div>

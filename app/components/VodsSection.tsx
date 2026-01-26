@@ -1,6 +1,79 @@
 "use client";
 
 import { useMemo, useState, useEffect } from "react";
+import Image from "next/image";
+
+// Normalize Twitch thumbnail templates (they often include a {width}x{height}
+// placeholder that may be URL-encoded). Decode and replace with a concrete
+// size so `next/image` and the CDN receive a valid URL.
+function normalizeThumbnail(url?: string, size = "640x360") {
+  if (!url) return undefined;
+  try {
+    let s = String(url);
+
+    // aggressively decode up to 6 times to collapse double/triple encodings
+    for (let i = 0; i < 6; i++) {
+      try {
+        const d = decodeURIComponent(s);
+        if (d === s) break;
+        s = d;
+      } catch {
+        break;
+      }
+    }
+
+    // Replace a variety of placeholder encodings observed in Twitch URLs.
+    // Examples to handle:
+    //  - {width}x{height}
+    //  - %7Bwidth%7Dx%7Bheight%7D
+    //  - %%7Bwidth%%7Dx%%7Bheight%%7D
+    //  - thumb0-%%7Bwidth%7Dx%%7Bheight%7D.jpg (mixed percent patterns)
+    s = s.replace(/\{width\}x\{height\}/gi, size);
+    s = s.replace(/%+7B\s*width\s*%+7D\s*x\s*%+7B\s*height\s*%+7D/gi, size);
+    s = s.replace(/%%7Bwidth%%7Dx%%7Bheight%%7D/gi, size);
+    s = s.replace(/%7Bwidth%7Dx%7Bheight%7D/gi, size);
+    s = s.replace(/%7Bwidth%7Dx%25%7Bheight%7D/gi, size);
+    // handle literal %{width}x%{height} patterns present in some VOD thumbnails
+    s = s.replace(/%\{width\}x%\{height\}/gi, size);
+    s = s.replace(/-?%\{width\}x%\{height\}/gi, size);
+    // final fallback: any occurrence of encoded braces pattern
+    s = s.replace(/%+7Bwidth%+7Dx%+7Bheight%+7D/gi, size);
+
+    return s;
+  } catch {
+    return url;
+  }
+}
+
+// Simple heuristic to infer a game name from a title or description when
+// the API doesn't provide `game_name`. Extend this list with common games
+// you stream; include 'Arc Raiders' so the dropdown picks it up.
+const GAME_KEYWORDS = [
+  "Arc Raiders",
+  "Rust",
+  "Minecraft",
+  "GTA V",
+  "Valorant",
+  "Warframe",
+  "Fortnite",
+  "League of Legends",
+  "Apex Legends",
+  "Call of Duty",
+  "Among Us",
+  "Rocket League",
+];
+
+function inferGameFromText(text?: string): string | undefined {
+  if (!text) return undefined;
+  const t = text.toLowerCase();
+  for (const k of GAME_KEYWORDS) {
+    if (t.includes(k.toLowerCase())) return k;
+    // also match short forms
+    const short = k.split(" ")[0];
+    if (short && t.includes(short.toLowerCase())) return k;
+  }
+  return undefined;
+}
 
 // Clip type (frontend subset of server's TwitchClip)
 type TwitchClip = {
@@ -10,6 +83,7 @@ type TwitchClip = {
   thumbnail_url?: string;
   game_id?: string;
   creator_name?: string;
+  broadcaster_name?: string;
   view_count?: number;
   [key: string]: unknown;
 };
@@ -29,15 +103,7 @@ type TwitchVideo = {
   [key: string]: unknown;
 };
 export default function VodsSection({ limit, debounceMs = 250 }: { limit?: number, debounceMs?: number }) {
-  // sample schedule-derived games (mirrors ScheduleSection overview games)
-  const games = [
-    "7 Days to Die",
-    "Minecraft",
-    "GTA V",
-    "Rust",
-    "Vigor",
-    "Arc Raiders"
-  ];
+  // (games list derived from fetched items below)
 
   const sampleVods = [
     { id: '1', title: "Epic Valorant Clutch", url: "#", game: "Valorant", type: "highlights", creator: "CanadienDragon", view: 1345 },
@@ -64,8 +130,10 @@ export default function VodsSection({ limit, debounceMs = 250 }: { limit?: numbe
     url: string;
     game: string;
     creator: string;
+    uploader?: string;
     view: number;
     type: string;
+    thumbnail?: string;
   };
 
   const [selectedGame, setSelectedGame] = useState<string>("all");
@@ -89,6 +157,8 @@ export default function VodsSection({ limit, debounceMs = 250 }: { limit?: numbe
         const res = await fetch(`/api/twitch/clips?limit=${limit ?? 12}`);
         if (!res.ok) throw new Error("clips fetch failed");
         const j = await res.json();
+        // debug: show raw API response in DevTools for troubleshooting
+        console.debug('/api/twitch/clips response', j);
         if (!mounted) return;
         setClips(j.clips ?? []);
       } catch {
@@ -110,6 +180,8 @@ export default function VodsSection({ limit, debounceMs = 250 }: { limit?: numbe
         const res = await fetch(`/api/twitch/videos?limit=${limit ?? 12}`);
         if (!res.ok) throw new Error("videos fetch failed");
         const j = await res.json();
+        // debug: show raw API response in DevTools for troubleshooting
+        console.debug('/api/twitch/videos response', j);
         if (!mounted) return;
         setVideos(j.videos ?? []);
       } catch {
@@ -126,12 +198,16 @@ export default function VodsSection({ limit, debounceMs = 250 }: { limit?: numbe
   const clipItems: DisplayItem[] = (clips && clips.length > 0) ? clips.map((c: TwitchClip) => ({
     id: c.id,
     title: (c.title as string) || "Untitled",
-    url: (c.url as string) || (c.thumbnail_url as string) || "#",
-    game: c.view_count !== undefined ? `${(c.view_count as number).toLocaleString()} views` : ((c.game_id as string) || "Clip"),
+    url: (c.url as string) || "#",
+    // Prefer `game_name` when available (resolved server-side), fall back to inferred game or game_id
+    game:
+      ((c).game_name as string) || inferGameFromText((c.title as string) || "") || ((c.game_id as string) || "Unknown"),
     // Note: only clips payloads include `creator_name` in Twitch's API — use it when present
     creator: (c.creator_name as string) || "Unknown",
+    uploader: (c.broadcaster_name as string) || (c.creator_name as string) || "Unknown",
     view: (c.view_count as number) || 0,
     type: "clips",
+    thumbnail: normalizeThumbnail(c.thumbnail_url as string) || undefined,
   })) : [];
 
   const videoItems: DisplayItem[] = (videos && videos.length > 0) ? videos.map((v: TwitchVideo) => {
@@ -140,18 +216,37 @@ export default function VodsSection({ limit, debounceMs = 250 }: { limit?: numbe
     return {
       id: v.id,
       title: (v.title as string) || "Untitled",
-      url: (v.url as string) || (v.thumbnail_url as string) || "#",
-      game: v.view_count !== undefined ? `${(v.view_count as number).toLocaleString()} views` : (v.duration || "VOD"),
+      url: (v.url as string) || "#",
+      // Prefer `game_name` when available (resolved server-side); fall back to inferred game
+      game: ((v).game_name as string) || inferGameFromText((v.title as string) || "") || "Unknown",
       // Videos from Helix do not include `creator_name`; use the uploader fields instead
       creator: (v.user_name as string) || (v.user_login as string) || "Unknown",
+      uploader: (v.user_name as string) || (v.user_login as string) || "Unknown",
       view: (v.view_count as number) || 0,
       type: normalized,
+      thumbnail: normalizeThumbnail(v.thumbnail_url as string) || undefined,
     } as DisplayItem;
   }) : [];
 
   let sourceItems: DisplayItem[] = clipItems.concat(videoItems);
   if (sourceItems.length === 0) {
     sourceItems = sampleVods as unknown as DisplayItem[];
+  }
+
+  // derive the list of games from the fetched/sample items so the filter matches real data
+  const games = useMemo(() => {
+    const s = new Set<string>();
+    sourceItems.forEach((it) => {
+      if (it.game) s.add(it.game);
+    });
+    return Array.from(s).sort();
+  }, [sourceItems]);
+
+  // client-side debug: show resolved items and available games
+  if (typeof window !== "undefined") {
+
+    console.debug("VodsSection sourceItems:", sourceItems);
+    console.debug("VodsSection derived games:", games);
   }
 
   const filtered = useMemo(() => {
@@ -202,9 +297,23 @@ export default function VodsSection({ limit, debounceMs = 250 }: { limit?: numbe
       </div>
 
       <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {toShow.map((v: DisplayItem) => (
+        {toShow.map((v: DisplayItem, idx: number) => (
           <a key={v.id} href={v.url} className="block bg-zinc-900 rounded-md p-4">
-            <div className="h-40 bg-zinc-800 rounded-md mb-3" />
+            {v.thumbnail ? (
+              <div className="w-full h-40 relative rounded-md mb-3 overflow-hidden">
+                <Image
+                  src={v.thumbnail}
+                  alt={v.title}
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 640px"
+                  className="object-cover"
+                  loading={idx < 3 ? "eager" : "lazy"}
+                />
+              </div>
+            ) : (
+              <div className="h-40 bg-zinc-800 rounded-md mb-3" />
+            )}
+            <div className="text-sm text-zinc-400">{v.uploader}</div>
             <div className="text-white font-medium">{v.title}</div>
             <div className="text-sm text-purple-200">{v.creator ? `${v.creator} • ` : ""}{v.game} • {v.type}</div>
           </a>

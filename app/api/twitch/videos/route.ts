@@ -50,6 +50,7 @@ async function getAppAccessToken(clientId: string, clientSecret: string) {
 }
 
 export async function GET(request: Request) {
+  void request
   const clientId = process.env.TWITCH_CLIENT_ID;
   const clientSecret = process.env.TWITCH_CLIENT_SECRET;
 
@@ -57,9 +58,8 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "no_twitch_credentials", videos: [] });
   }
 
-  const urlObj = new URL(request.url);
-  const limitParam = urlObj.searchParams.get("limit") || "12";
-  const limit = Math.min(50, parseInt(limitParam, 10) || 12);
+  // Force a fixed limit to 12 to keep payload sizes consistent
+  const limit = 12;
 
   const now = Date.now();
   if (videosCache.data && videosCache.fetchedAt && now - videosCache.fetchedAt < VIDEOS_TTL * 1000) {
@@ -99,6 +99,39 @@ export async function GET(request: Request) {
       if (Array.isArray(maybeData)) {
         videosArray = maybeData as unknown as TwitchVideo[];
       }
+    }
+
+    // Removed: server-side `game_id` -> `game_name` resolution to reduce Helix calls.
+
+    // Removed: `stream_id` -> stream -> `game_id` resolution. Rely on title inference only.
+
+    // (Proximity inference removed) Rely on stream_id resolution and title-based inference only.
+
+    // Fallback: infer game from title for items still missing a game_name.
+    // Expect titles to include a bracketed platform/game prefix like "[PC - Vigor]".
+    try {
+      const inferGameFromText = (text?: string) => {
+        if (!text) return undefined;
+        // Collect all bracketed tokens, e.g. [Highlight] [XBL - DayZ]
+        const matches = Array.from(text.matchAll(/[\[\(]\s*([^\]\)]+)[\]\)]/g)).map((m) => m[1]);
+        for (const raw of matches) {
+          const inner = String(raw || "").trim();
+          const parts = inner.split(/[-–—,|:]/).map((p) => p.trim()).filter(Boolean);
+          if (parts.length >= 2) {
+            return parts.slice(1).join(" ").trim();
+          }
+        }
+        return undefined;
+      };
+
+      videosArray = videosArray.map((v) => {
+        if (v["game_name"]) return v;
+        const inferred = inferGameFromText(v.title ? String(v.title) : undefined);
+        if (inferred) return { ...v, game_name: inferred };
+        return v;
+      });
+    } catch {
+      // ignore
     }
 
     const payload: VideosPayload = { videos: videosArray, fetchedAt: new Date().toISOString() };

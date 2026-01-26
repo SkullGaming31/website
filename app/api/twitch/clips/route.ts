@@ -107,6 +107,30 @@ export async function GET(request: Request) {
       }
     }
 
+    // If clips include game_id values, fetch game names and attach them to the clip objects
+    try {
+      const gameIds = Array.from(new Set(clipsArray.map((c) => (c.game_id ? String(c.game_id) : "")).filter(Boolean)));
+      if (gameIds.length > 0) {
+        // Twitch Helix: /helix/games?id=... (can pass multiple ids)
+        const gamesRes = await fetch(`https://api.twitch.tv/helix/games?${gameIds.map((id) => `id=${encodeURIComponent(id)}`).join("&")}`, {
+          headers: { Authorization: `Bearer ${token}`, "Client-Id": clientId },
+        });
+        if (gamesRes.ok) {
+          const gj: unknown = await gamesRes.json();
+          if (isRecord(gj) && Array.isArray(gj.data)) {
+            const mapping = new Map<string, string>();
+            for (const g of gj.data as Array<Record<string, unknown>>) {
+              if (g.id && g.name) mapping.set(String(g.id), String(g.name));
+            }
+            // attach game_name to clips when available
+            clipsArray = clipsArray.map((c) => (c.game_id && mapping.has(String(c.game_id)) ? { ...c, game_name: mapping.get(String(c.game_id)) } : c));
+          }
+        }
+      }
+    } catch {
+      // ignore game name resolution failures — clips still returned
+    }
+
     const payload: ClipsPayload = { clips: clipsArray, fetchedAt: new Date().toISOString() };
 
     clipsCache = { data: payload, fetchedAt: Date.now() };

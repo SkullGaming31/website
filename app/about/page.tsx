@@ -7,6 +7,7 @@ export const metadata = {
   },
 };
 
+// import Image from "next/image";
 import GamePlaytime from "../components/GamePlaytime";
 
 export default function AboutPage() {
@@ -18,7 +19,7 @@ export default function AboutPage() {
       <main className="w-full max-w-4xl mx-auto py-20 px-6">
         <div className="mb-8 text-center">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-            <div className="md:text-left">
+            <div className="md:text-center">
               <h1 className="text-4xl font-bold text-white">About CanadienDragon</h1>
               <p className="mt-3 text-purple-200 max-w-2xl mx-auto md:mx-0">Welcome to the DragonsDen! I&apos;m a passionate gamer, content creator, and community builder who&apos;s been dominating the digital battlefield for over a decade. From clutch plays to epic fails, I share it all with my amazing community.</p>
               <div className="mt-6 flex justify-center md:justify-start gap-4">
@@ -27,9 +28,16 @@ export default function AboutPage() {
               </div>
             </div>
 
-            <div className="flex justify-center">
-              <div className="w-48 h-48 rounded-full bg-gradient-to-br from-purple-600 to-indigo-600 flex items-center justify-center text-5xl">💀</div>
-            </div>
+            {/* <div className="flex justify-center">
+              <div className="w-48 h-48 rounded-full bg-gradient-to-br from-purple-600 to-indigo-600 flex items-center justify-center relative overflow-hidden">
+                <Image
+                  src="/images/Skulls_LogoNB.png"
+                  alt="Skulls logo"
+                  fill
+                  className="object-contain p-6"
+                />
+              </div>
+            </div> */}
           </div>
         </div>
 
@@ -68,12 +76,7 @@ export default function AboutPage() {
         </div>
 
         <section className="bg-zinc-900 rounded-xl p-6 mb-6 space-y-4 text-center">
-          <p className="text-purple-200">I enjoy gaming with friends, I&apos;m a hobby programmer currently creating a Twitch<a href="https://github.com/skullgaming31/opendevbot">(OpenDevBot)</a> and Discord<a href="https://github.com/skullgaming31/opendevbot">(DragonBot)</a>bot along with this website with the help of AI (GitHub Copilot)</p>
-        </section>
-
-        <section className="bg-zinc-900 rounded-xl p-6 mb-6 text-center">
-          <h2 className="text-2xl font-semibold text-white mb-3">Contact</h2>
-          <p className="text-purple-200">For business inquiries or partnerships, email <a href="mailto:skullgamingg31@gmail.com" className="underline">skullgamingg31@gmail.com</a></p>
+          <p className="text-purple-200">I&apos;m CanadienDragon — a hobby streamer and developer who loves openworld survival, space sims, and chaotic multiplayer. I share streams, clips, and small tools <a href="">(like OpenDevBot)</a>. Join the Discord to hang out, submit clips, or catch the next stream — I love building community</p>
         </section>
 
         <section className="bg-zinc-900 rounded-xl p-6 mb-6">
@@ -89,14 +92,14 @@ export default function AboutPage() {
               <p className="mt-2 text-sm">Click the &quot;Join Discord&quot; button in the header or footer to join. Read the #rules channel after joining to get full access.</p>
             </details>
 
-            <details className="bg-zinc-800 rounded-md p-4">
+            {/* <details className="bg-zinc-800 rounded-md p-4">
               <summary className="cursor-pointer font-medium">How do I submit a clip or highlight?</summary>
               <p className="mt-2 text-sm">Post clips in the #clips channel on Discord or use the VODs page to find and submit highlights.</p>
-            </details>
+            </details> */}
 
             <details className="bg-zinc-800 rounded-md p-4">
               <summary className="cursor-pointer font-medium">Can I sponsor or partner with CanadienDragon?</summary>
-              <p className="mt-2 text-sm">Yes — for sponsorship inquiries, email <a href="mailto:skullgamingg31@gmail.com" className="underline">skullgamingg31@gmail.com</a> with details about your proposal.</p>
+              <p className="mt-2 text-sm">Yes — for sponsorship inquiries, please use the <a href="/contact" className="underline">contact form</a> with details about your proposal.</p>
             </details>
 
             <details className="bg-zinc-800 rounded-md p-4">
@@ -132,7 +135,7 @@ export default function AboutPage() {
                 {
                   "@type": "Question",
                   "name": "Can I sponsor or partner with CanadienDragon?",
-                  "acceptedAnswer": { "@type": "Answer", "text": "Yes — for sponsorship inquiries, email skullgamingg31@gmail.com with details about your proposal." }
+                  "acceptedAnswer": { "@type": "Answer", "text": "Yes — for sponsorship inquiries, please use the contact form on the site with details about your proposal." }
                 },
                 {
                   "@type": "Question",

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 type TwitchVideo = {
   id: string;
+  stream_id?: string | null;
   user_id?: string;
   user_login?: string;
   user_name?: string;
@@ -11,12 +12,19 @@ type TwitchVideo = {
   published_at?: string;
   url?: string;
   thumbnail_url?: string;
+  viewable: string;
   view_count?: number;
   language?: string;
-  type?: string; // 'upload' | 'archive' | 'highlight'
+  type?: "upload" | "archive" | "highlight";
   duration?: string;
+  muted_segments?: muted_segments;
   [key: string]: unknown;
 };
+
+type muted_segments = {
+  duration: number;
+  offset: number;
+}[];
 
 type VideosPayload = {
   videos: TwitchVideo[];
@@ -100,12 +108,6 @@ export async function GET(request: Request) {
         videosArray = maybeData as unknown as TwitchVideo[];
       }
     }
-
-    // Removed: server-side `game_id` -> `game_name` resolution to reduce Helix calls.
-
-    // Removed: `stream_id` -> stream -> `game_id` resolution. Rely on title inference only.
-
-    // (Proximity inference removed) Rely on stream_id resolution and title-based inference only.
 
     // Fallback: infer game from title for items still missing a game_name.
     // Expect titles to include a bracketed platform/game prefix like "[PC - Vigor]".

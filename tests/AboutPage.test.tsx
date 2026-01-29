@@ -24,9 +24,7 @@ describe('About page', () => {
     expect(screen.getByTestId('game-playtime-230410')).toBeInTheDocument();
     expect(screen.getByTestId('game-playtime-244850')).toBeInTheDocument();
 
-    // Contact email present inside the Contact paragraph (avoids matching duplicate mentions elsewhere)
-    const contactPara = screen.getByText(/For business inquiries or partnerships, email/i);
-    expect(within(contactPara).getByText(/skullgamingg31@gmail.com/i)).toBeInTheDocument();
+    // Contact information handled via the contact form (no direct email assertion)
 
     // FAQ entries present (summary titles)
     expect(screen.getByText(/How often do you stream\?/i)).toBeInTheDocument();

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import LiveStatusBadge from "./LiveStatusBadge";
 
@@ -7,8 +8,14 @@ export default function Header() {
       <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center">
-              <span className="text-white font-bold">💀</span>
+            <div className="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center overflow-hidden">
+              <Image
+                src="/images/Skulls_LogoNB.png"
+                alt="CanadienDragon logo"
+                width={64}
+                height={64}
+                className="object-contain"
+              />
             </div>
             <span className="font-semibold">canadiendragon</span>
           </div>
@@ -18,6 +25,7 @@ export default function Header() {
             <Link href="/schedule" className="hover:underline">Schedule</Link>
             <Link href="/videos" className="hover:underline">Videos</Link>
             <Link href="/about" className="hover:underline">About</Link>
+            <Link href="/contact" className="hover:underline">Contact</Link>
           </nav>
         </div>
 

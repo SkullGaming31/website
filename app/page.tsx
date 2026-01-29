@@ -50,7 +50,7 @@ export default function Home() {
         </main>
       </div>
       <div className="max-w-6xl mx-auto px-8">
-        <VodsSection limit={5} />
+        <VodsSection limit={5} featuredOnly={true} />
         <ScheduleSection showWeeklyOverview={false} />
       </div>
 

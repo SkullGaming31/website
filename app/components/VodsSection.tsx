@@ -71,6 +71,54 @@ function inferGameFromText(text?: string): string | undefined {
   return undefined;
 }
 
+// Extract game name from common title patterns like "[pc - arc raiders]" or "(pc - arc raiders)"
+function extractGameFromTitle(text?: string): string | undefined {
+  if (!text) return undefined;
+  // look for bracketed segments first: [pc - arc raiders] or (pc - arc raiders)
+  const bracketMatch = text.match(/[\[\(][^\]\)\[]*-\s*([^\]\)]+)[\]\)]/i);
+  if (bracketMatch && bracketMatch[1]) return titleCase(bracketMatch[1].trim());
+
+  // fallback: single bracket with just the game: [arc raiders]
+  const simpleBracket = text.match(/[\[\(]\s*([^\]\)]+)\s*[\]\)]/i);
+  if (simpleBracket && simpleBracket[1]) {
+    const content = simpleBracket[1].trim();
+    // If bracket contains multiple comma-separated parts like "XBL, Rust Console",
+    // prefer the last segment which is typically the game name.
+    if (content.includes(",")) {
+      const parts = content.split(",").map(p => p.trim()).filter(Boolean);
+      if (parts.length > 0) return titleCase(parts[parts.length - 1]);
+    }
+    return titleCase(content);
+  }
+
+  // common suffix patterns: "... - arc raiders", "... | arc raiders", "...: arc raiders"
+  const suffixMatch = text.match(/[-–|:\|]\s*([^\-\|:\[\(]{2,80})\s*$/i);
+  if (suffixMatch && suffixMatch[1]) return titleCase(suffixMatch[1].trim());
+
+  return undefined;
+}
+
+function titleCase(s: string): string {
+  return s
+    .split(/\s+/)
+    .map(w => w ? (w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()) : '')
+    .join(' ')
+    .replace(/\s+\-\s+/g, ' - ');
+}
+
+function chooseBestGame(apiGame?: string, extracted?: string, inferred?: string) {
+  // Prefer the bracket-extracted value first.
+  if (extracted) return titleCase(extracted);
+
+  // If no bracket value, fall back to inferred game from the title body.
+  if (inferred) return titleCase(inferred);
+
+  // Finally, fall back to any API-provided game name.
+  if (apiGame) return titleCase(String(apiGame));
+
+  return undefined;
+}
+
 function formatViews(n?: number): string | undefined {
   if (n == null) return undefined;
   try {
@@ -107,7 +155,7 @@ type TwitchVideo = {
   duration?: string;
   [key: string]: unknown;
 };
-export default function VodsSection({ limit, debounceMs = 250 }: { limit?: number, debounceMs?: number }) {
+export default function VodsSection({ limit, debounceMs = 250, featuredOnly = false }: { limit?: number, debounceMs?: number, featuredOnly?: boolean }) {
   // (games list derived from fetched items below)
 
   const sampleVods = [
@@ -163,7 +211,7 @@ export default function VodsSection({ limit, debounceMs = 250 }: { limit?: numbe
         if (!res.ok) throw new Error("clips fetch failed");
         const j = await res.json();
         // debug: show raw API response in DevTools for troubleshooting
-        console.debug('/api/twitch/clips response', j);
+        // console.debug('/api/twitch/clips response', j);
         if (!mounted) return;
         setClips(j.clips ?? []);
       } catch {
@@ -186,7 +234,7 @@ export default function VodsSection({ limit, debounceMs = 250 }: { limit?: numbe
         if (!res.ok) throw new Error("videos fetch failed");
         const j = await res.json();
         // debug: show raw API response in DevTools for troubleshooting
-        console.debug('/api/twitch/videos response', j);
+        // console.debug('/api/twitch/videos response', j);
         if (!mounted) return;
         setVideos(j.videos ?? []);
       } catch {
@@ -200,30 +248,47 @@ export default function VodsSection({ limit, debounceMs = 250 }: { limit?: numbe
     };
   }, [limit]);
 
-  const clipItems: DisplayItem[] = (clips && clips.length > 0) ? clips.map((c: TwitchClip) => ({
-    id: c.id,
-    title: (c.title as string) || "Untitled",
-    url: (c.url as string) || "#",
-    // If view_count present for clips, show formatted views in the 'game' position
-    game: (c.view_count ? (formatViews(c.view_count as number) ?? "Unknown") : (((c).game_name as string) || inferGameFromText((c.title as string) || "") || ((c.game_id as string) || "Unknown"))),
-    // Note: only clips payloads include `creator_name` in Twitch's API — use it when present
-    creator: (c.creator_name as string) || "Unknown",
-    uploader: (c.broadcaster_name as string) || (c.creator_name as string) || "Unknown",
-    view: (c.view_count as number) || 0,
-    type: "clips",
-    thumbnail: normalizeThumbnail(c.thumbnail_url as string) || undefined,
-  })) : [];
+  const clipItems: DisplayItem[] = (clips && clips.length > 0) ? clips
+    .filter((c: TwitchClip) => {
+      // If requested, only include clips explicitly marked as featured.
+      if (featuredOnly) return Boolean((c).is_featured);
+      return true;
+    })
+    .map((c: TwitchClip) => {
+      const title = (c.title as string) || "Untitled";
+      const apiGame = (c).game_name as string | undefined;
+      const extracted = extractGameFromTitle(title);
+      const inferred = inferGameFromText(title);
+      const gameName = chooseBestGame(apiGame, extracted, inferred) || (c.game_id as string) || "Unknown";
+      return {
+        id: c.id,
+        title,
+        url: (c.url as string) || "#",
+        // Keep `game` as the game name; view count stays in `view`.
+        game: gameName,
+        // Note: only clips payloads include `creator_name` in Twitch's API — use it when present
+        creator: (c.creator_name as string) || "Unknown",
+        uploader: (c.broadcaster_name as string) || (c.creator_name as string) || "Unknown",
+        view: (c.view_count as number) || 0,
+        type: "clips",
+        thumbnail: normalizeThumbnail(c.thumbnail_url as string) || undefined,
+      } as DisplayItem;
+    }) : [];
 
   const videoItems: DisplayItem[] = (videos && videos.length > 0) ? videos.map((v: TwitchVideo) => {
     const helixType = (v.type as string) || "upload";
     const normalized = helixType === "highlight" ? "highlights" : "vods";
+    const title = (v.title as string) || "Untitled";
+    const apiGame = (v).game_name as string | undefined;
+    const extracted = extractGameFromTitle(title);
+    const inferred = inferGameFromText(title);
+    const gameName = chooseBestGame(apiGame, extracted, inferred) || (v.duration as string) || "Unknown";
     return {
       id: v.id,
-      title: (v.title as string) || "Untitled",
+      title,
       url: (v.url as string) || "#",
-      // Prefer `game_name` when available; if view_count is present show formatted views,
-      // otherwise if view_count is missing use the video's duration in the 'game' position.
-      game: (v.view_count ? (formatViews(v.view_count as number) ?? "Unknown") : (((v).game_name as string) || inferGameFromText((v.title as string) || "") || (v.duration as string) || "Unknown")),
+      // Keep `game` as the game name; view count stays in `view`.
+      game: gameName,
       // Videos from Helix do not include `creator_name`; use the uploader fields instead
       creator: (v.user_name as string) || (v.user_login as string) || "Unknown",
       uploader: (v.user_name as string) || (v.user_login as string) || "Unknown",
@@ -233,9 +298,23 @@ export default function VodsSection({ limit, debounceMs = 250 }: { limit?: numbe
     } as DisplayItem;
   }) : [];
 
-  let sourceItems: DisplayItem[] = clipItems.concat(videoItems);
+  // If `featuredOnly` is requested we only show clips (and never VODs/highlights).
+  let sourceItems: DisplayItem[] = featuredOnly ? clipItems : clipItems.concat(videoItems);
   if (sourceItems.length === 0) {
-    sourceItems = sampleVods as unknown as DisplayItem[];
+    // Fallback to sample data — when showing featured-only, prefer sample clips.
+    sourceItems = featuredOnly ? (sampleVods as unknown as DisplayItem[]).filter((s) => s.type === "clips") : (sampleVods as unknown as DisplayItem[]);
+  }
+
+  // Debug helper: log resolved items and what the extractor/inference returned
+  if (typeof window !== "undefined") {
+    try {
+      // console.log("VodsSection debug: clipItems (id,title,game)", clipItems.map(c => ({ id: c.id, title: c.title, game: c.game })));
+      // console.log("VodsSection debug: videoItems (id,title,extracted,inferred,game)", (videos || []).map(v => ({ id: v.id, title: v.title, extracted: extractGameFromTitle(v.title as string), inferred: inferGameFromText(v.title as string), game_name: (v).game_name })));
+      // console.log("VodsSection debug: final sourceItems", sourceItems.map(s => ({ id: s.id, title: s.title, game: s.game })));
+    } catch (e) {
+      // swallow debug errors to avoid breaking the UI
+      console.warn("VodsSection debug error", e);
+    }
   }
 
   // derive the list of games from the fetched/sample items so the filter matches real data
@@ -255,8 +334,8 @@ export default function VodsSection({ limit, debounceMs = 250 }: { limit?: numbe
   // client-side debug: show resolved items and available games
   if (typeof window !== "undefined") {
 
-    console.debug("VodsSection sourceItems:", sourceItems);
-    console.debug("VodsSection derived games:", games);
+    // console.debug("VodsSection sourceItems:", sourceItems);
+    // console.debug("VodsSection derived games:", games);
   }
 
   const filtered = useMemo(() => {
@@ -325,7 +404,7 @@ export default function VodsSection({ limit, debounceMs = 250 }: { limit?: numbe
             )}
             <div className="text-sm text-zinc-400">{v.uploader}</div>
             <div className="text-white font-medium">{v.title}</div>
-            <div className="text-sm text-purple-200">{v.creator ? `${v.creator} • ` : ""}{v.game} • {v.type}</div>
+            <div className="text-sm text-purple-200">{v.creator ? `${v.creator} • ` : ""}{v.game}{v.view ? ` • ${formatViews(v.view)}` : ""}</div>
           </a>
         ))}
 

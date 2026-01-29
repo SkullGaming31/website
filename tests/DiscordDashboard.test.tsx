@@ -1,5 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import DiscordDashboard from "../app/components/DiscordDashboard";
+import { vi, describe, it, expect } from "vitest";
 
 describe("DiscordDashboard", () => {
   it("renders the four dashboard metrics with expected labels and values", () => {

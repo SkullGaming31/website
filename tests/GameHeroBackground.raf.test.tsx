@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, cleanup } from '@testing-library/react';
 import GameHeroBackground from '../app/components/GameHeroBackground';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 
 describe('GameHeroBackground RAF animation', () => {
   afterEach(() => {
@@ -15,7 +15,7 @@ describe('GameHeroBackground RAF animation', () => {
 
   it('updates layer transforms when RAF callbacks run and cancels on unmount', () => {
     // stub matchMedia to allow animation
-    (window as any).matchMedia = (query: string) => ({ matches: false, media: query, addEventListener: () => {}, removeEventListener: () => {} });
+    (window as any).matchMedia = (query: string) => ({ matches: false, media: query, addEventListener: () => { }, removeEventListener: () => { } });
 
     const callbacks = new Map<number, FrameRequestCallback>();
     let nextId = 1;

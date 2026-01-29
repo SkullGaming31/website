@@ -16,6 +16,15 @@ try {
     process.exit(lintErr && lintErr.status ? lintErr.status : 1);
   }
 
+  // Run typecheck and abort the push on type errors.
+  try {
+    execSync('npm run typecheck', { stdio: 'inherit', shell: true });
+    console.log('Typecheck passed.');
+  } catch (typeErr) {
+    console.error('Typecheck failed — aborting push.');
+    process.exit(typeErr && typeErr.status ? typeErr.status : 1);
+  }
+
   // Now run tests and abort if they fail.
   execSync('npm test', { stdio: 'inherit', shell: true });
   console.log('Tests passed — continuing push.');

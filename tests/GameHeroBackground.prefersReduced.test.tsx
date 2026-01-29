@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { vi } from "vitest";
+import { vi, describe, it, expect } from "vitest";
 
 // Ensure we mock matchMedia BEFORE importing the component so the module-level
 // `prefersReduced` value picks up the mocked result.
@@ -8,10 +8,10 @@ Object.defineProperty(window, "matchMedia", {
   value: (query: string) => ({
     matches: true,
     media: query,
-    addListener: () => {},
-    removeListener: () => {},
-    addEventListener: () => {},
-    removeEventListener: () => {},
+    addListener: () => { },
+    removeListener: () => { },
+    addEventListener: () => { },
+    removeEventListener: () => { },
     onchange: null,
     dispatchEvent: () => false,
   }),

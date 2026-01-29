@@ -29,7 +29,7 @@ describe('SteamPlaytime', () => {
 
   it('shows loading state while fetching', async () => {
     const oldFetch = (globalThis as any).fetch;
-    let resolveFetch: (value: any) => void;
+    let resolveFetch: (value: any) => void = () => { };
     const fetchPromise = new Promise((res) => { resolveFetch = res; });
     (globalThis as any).fetch = vi.fn().mockReturnValue(fetchPromise);
 
@@ -39,10 +39,12 @@ describe('SteamPlaytime', () => {
       await waitFor(() => expect(screen.getByText(/Loading playtime…/i)).toBeInTheDocument());
 
       // now resolve the fetch with a successful response
-      resolveFetch({ ok: true, json: async () => ({
-        spaceEngineers: { appid: 244850, name: 'Space Engineers', hours: 1, hours_2weeks: 0 },
-        warframe: { appid: 230410, name: 'Warframe', hours: 2, hours_2weeks: 0 },
-      })});
+      resolveFetch({
+        ok: true, json: async () => ({
+          spaceEngineers: { appid: 244850, name: 'Space Engineers', hours: 1, hours_2weeks: 0 },
+          warframe: { appid: 230410, name: 'Warframe', hours: 2, hours_2weeks: 0 },
+        })
+      });
 
       // wait for the totals to appear
       await waitFor(() => expect(screen.getByText(/Total: 1 hrs/i)).toBeInTheDocument());
@@ -90,7 +92,7 @@ describe('SteamPlaytime', () => {
 
   it('does not attempt to set state after unmount (cancel path)', async () => {
     const oldFetch = (globalThis as any).fetch;
-    let resolveFetch: (value: any) => void;
+    let resolveFetch: (value: any) => void = () => { };
     const fetchPromise = new Promise((res) => { resolveFetch = res; });
     (globalThis as any).fetch = vi.fn().mockReturnValue(fetchPromise);
 

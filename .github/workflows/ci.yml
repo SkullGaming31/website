@@ -30,6 +30,9 @@ jobs:
       - name: Run tests
         run: npm run test -- --reporter dot
 
+      - name: Run type checking
+        run: npm run typecheck
+
       - name: Show summary (text)
         if: always()
         run: |

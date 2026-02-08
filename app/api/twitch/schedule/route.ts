@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 // Types for Twitch schedule response
-type TwitchCategory = { id?: string; name?: string; [key: string]: unknown };
+type TwitchCategory = { id?: string; name?: string;[key: string]: unknown };
 type TwitchSegment = {
   id: string;
   start_time?: string;
@@ -24,7 +24,7 @@ let tokenCache: { token?: string; expiresAt?: number } = {};
 let scheduleCache: { data?: SchedulePayload; fetchedAt?: number } = {};
 
 // Broadcaster numeric ID (recommended by user). This ID can be used for Helix endpoints directly.
-const BROADCASTER_ID = "1155035316";
+const BROADCASTER_ID = "31124455"; // canadiendragon's Twitch numeric ID
 const TOKEN_TTL_BUFFER = 30; // seconds
 const SCHEDULE_TTL = 30; // seconds
 

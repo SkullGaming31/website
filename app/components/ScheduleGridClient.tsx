@@ -46,12 +46,12 @@ export default function ScheduleGridClient({ initialPayload }: { initialPayload?
       fetchSchedule();
     }
 
-    const id = setInterval(fetchSchedule, 30_000);
+    const id = setInterval(fetchSchedule, 300_000); // 5 minutes
     return () => {
       mounted = false;
       clearInterval(id);
     };
-  }, [payload]);
+  }, []);
 
   const dayMap = useMemo(() => {
     const map: Record<string, TwitchSegment[]> = {

@@ -23,7 +23,7 @@ export default function ScheduleVacationBanner() {
       }
     }
     fetchSchedule();
-    const id = setInterval(fetchSchedule, 60_000); // refresh every 60s
+    const id = setInterval(fetchSchedule, 300_000); // refresh every 5 minutes
     return () => {
       mounted = false;
       clearInterval(id);

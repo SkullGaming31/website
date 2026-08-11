@@ -26,7 +26,7 @@ let scheduleCache: { data?: SchedulePayload; fetchedAt?: number } = {};
 // Broadcaster numeric ID (recommended by user). This ID can be used for Helix endpoints directly.
 const BROADCASTER_ID = "31124455"; // canadiendragon's Twitch numeric ID
 const TOKEN_TTL_BUFFER = 30; // seconds
-const SCHEDULE_TTL = 30; // seconds
+const SCHEDULE_TTL = 300; // seconds (5 minutes)
 
 async function getAppAccessToken(clientId: string, clientSecret: string) {
   const now = Date.now() / 1000;

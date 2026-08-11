@@ -62,10 +62,6 @@ export default function AboutPage() {
                 <div className="text-xl font-semibold text-white">Space Engineers</div>
                 <GamePlaytime steamid={steamid || undefined} appid={244850} />
               </div>
-              <div className="bg-zinc-800 rounded-md p-4 text-center">
-                <div className="text-xl font-semibold text-white">Arc Raiders</div>
-                <GamePlaytime steamid={steamid || undefined} appid={1808500} />
-              </div>
             </div>
           </div>
         </section>

@@ -3,19 +3,19 @@
   "version": "0.2.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "start": "next start",
+    "start:dev": "next dev",
     "prepare": "husky install",
     "test": "vitest",
     "test:watch": "vitest --watch",
     "test:coverage": "vitest run --coverage",
     "build": "next build",
-    "start": "next start",
     "lint": "eslint --fix",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
-    "next": "^16.1.6",
+    "next": "^16.2.10",
     "react": "19.2.0",
     "react-dom": "19.2.0"
   },

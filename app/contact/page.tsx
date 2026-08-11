@@ -5,6 +5,10 @@ export const metadata = {
 
 import ContactForm from "../components/ContactForm";
 
+/**
+ * TODO: have the email(skullgamingg31@gmail.com) on the contact page below the form incase the contact form is not working.
+ */
+
 export default function ContactPage() {
   return (
     <div className="min-h-screen">

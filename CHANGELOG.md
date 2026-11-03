@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased — Dependency updates
+
+- Updated Next.js and its ESLint configuration to 16.4.4, React and React DOM to 19.3.1, Tailwind CSS and its PostCSS plugin to 4.3.4, and baseline browser mapping to 2.11.35.
+
 ## 2025-11-09 — Features & fixes
 
 - Added Steam playtime integration:

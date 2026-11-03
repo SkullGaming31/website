@@ -19,4 +19,16 @@ describe('TwitchPlayer', () => {
     // use waitFor to allow effect to append script
     await waitFor(() => expect(document.getElementById('twitch-embed-script')).toBeTruthy());
   });
+
+  it('normalizes IPv6 localhost to a Twitch-compatible parent hostname', async () => {
+    render(<TwitchPlayer channel="canadiendragon" parent="::1" />);
+
+    const iframe = await screen.findByTitle(/Twitch stream canadiendragon/i);
+    const parentAttribute = iframe.parentElement?.getAttribute('data-parent') ?? '';
+
+    expect(parentAttribute.split(',')).toContain('127.0.0.1');
+    expect(parentAttribute).not.toContain('::1');
+    expect(iframe.getAttribute('src')).toContain('parent=127.0.0.1');
+    expect(iframe.getAttribute('src')).not.toContain('parent=%3A%3A1');
+  });
 });

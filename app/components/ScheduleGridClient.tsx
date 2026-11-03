@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 type TwitchCategory = { id?: string; name?: string;[key: string]: unknown };
 type TwitchSegment = {
@@ -24,6 +24,7 @@ const WEEK_DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Satu
 
 export default function ScheduleGridClient({ initialPayload }: { initialPayload?: SchedulePayload | null }) {
   const [payload, setPayload] = useState<SchedulePayload | null>(initialPayload ?? null);
+  const shouldFetchOnMount = useRef(!payload || !Array.isArray(payload.segments) || payload.segments.length === 0);
 
   useEffect(() => {
     let mounted = true;
@@ -42,7 +43,7 @@ export default function ScheduleGridClient({ initialPayload }: { initialPayload?
     }
 
     // If we don't have payload or segments are empty, fetch client-side
-    if (!payload || !Array.isArray(payload.segments) || payload.segments.length === 0) {
+    if (shouldFetchOnMount.current) {
       fetchSchedule();
     }
 
